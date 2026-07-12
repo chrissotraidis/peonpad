@@ -584,6 +584,126 @@ static bool isTextInput(int key) {
 	return key >= 32 && key <= 128 && !(KeyModifiers & (ModifierAlt | ModifierControl | ModifierSuper));
 }
 
+#ifdef PEONPAD_IOS
+static std::map<SDL_FingerID, SDL_FPoint> PeonPadTouches;
+static std::map<SDL_FingerID, SDL_FPoint> PeonPadChordStart;
+static bool PeonPadMapPan = false;
+static bool PeonPadSuppressTouchMouse = false;
+static bool PeonPadTwoFingerCommand = false;
+static SDL_FPoint PeonPadPanCenter;
+
+static SDL_FPoint PeonPadTouchCenter()
+{
+	SDL_FPoint center = {0.0f, 0.0f};
+	for (const auto &[fingerId, point] : PeonPadTouches) {
+		(void)fingerId;
+		center.x += point.x;
+		center.y += point.y;
+	}
+	center.x /= PeonPadTouches.size();
+	center.y /= PeonPadTouches.size();
+	return center;
+}
+
+static PixelPos PeonPadScreenPos(const SDL_FPoint &point)
+{
+	return {static_cast<int>(std::lround(point.x * Video.Width)),
+	        static_cast<int>(std::lround(point.y * Video.Height))};
+}
+
+static void PeonPadResetTouches()
+{
+	PeonPadTouches.clear();
+	PeonPadChordStart.clear();
+	PeonPadMapPan = false;
+	PeonPadSuppressTouchMouse = false;
+	PeonPadTwoFingerCommand = false;
+}
+
+static void PeonPadBeginMapPan(const EventCallback &callbacks)
+{
+	if (&callbacks != &GameCallbacks || PeonPadTouches.size() != 3) {
+		return;
+	}
+	PeonPadTwoFingerCommand = false;
+
+	if (!UI.MouseViewport) {
+		return;
+	}
+
+	PeonPadPanCenter = PeonPadTouchCenter();
+	if (!UI.MouseViewport->IsInsideMapArea(PeonPadScreenPos(PeonPadPanCenter))) {
+		return;
+	}
+
+	InputMouseButtonCancel(SDL_BUTTON_LEFT);
+	CancelMouseSelection();
+	PeonPadMapPan = true;
+	PeonPadSuppressTouchMouse = true;
+}
+
+static void PeonPadMoveMapPan(const EventCallback &callbacks)
+{
+	if (&callbacks != &GameCallbacks || !PeonPadMapPan || PeonPadTouches.size() != 3
+	    || !UI.MouseViewport) {
+		return;
+	}
+
+	const SDL_FPoint center = PeonPadTouchCenter();
+	constexpr float PanGain = 1.35f;
+	const PixelDiff delta(
+		static_cast<int>(std::lround((center.x - PeonPadPanCenter.x) * Video.Width * PanGain)),
+		static_cast<int>(std::lround((center.y - PeonPadPanCenter.y) * Video.Height * PanGain)));
+	PeonPadPanCenter = center;
+	UI.MouseViewport->Set(UI.MouseViewport->MapPos, UI.MouseViewport->Offset - delta);
+}
+
+static void PeonPadBeginTwoFingerCommand()
+{
+	InputMouseButtonCancel(SDL_BUTTON_LEFT);
+	CancelMouseSelection();
+	PeonPadChordStart = PeonPadTouches;
+	PeonPadTwoFingerCommand = true;
+	PeonPadSuppressTouchMouse = true;
+}
+
+static void PeonPadUpdateTwoFingerCommand()
+{
+	constexpr int MovementTolerance = 16;
+	for (const auto &[fingerId, start] : PeonPadChordStart) {
+		const auto current = PeonPadTouches.find(fingerId);
+		if (current == PeonPadTouches.end()) {
+			continue;
+		}
+		const PixelDiff distance = PeonPadScreenPos(current->second) - PeonPadScreenPos(start);
+		if (std::abs(distance.x) > MovementTolerance || std::abs(distance.y) > MovementTolerance) {
+			PeonPadTwoFingerCommand = false;
+			return;
+		}
+	}
+}
+
+static void PeonPadIssueRightClick(const EventCallback &callbacks, const SDL_FPoint &target)
+{
+	const PixelPos pos = PeonPadScreenPos(target);
+	const unsigned ticks = SDL_GetTicks();
+	InputMouseMove(callbacks, ticks, pos.x, pos.y);
+	InputMouseButtonPress(callbacks, ticks, SDL_BUTTON_RIGHT);
+	InputMouseButtonRelease(callbacks, ticks, SDL_BUTTON_RIGHT);
+}
+
+static SDL_FPoint PeonPadLeftmostTouch()
+{
+	auto leftmost = PeonPadTouches.begin();
+	for (auto touch = std::next(leftmost); touch != PeonPadTouches.end(); ++touch) {
+		if (touch->second.x < leftmost->second.x) {
+			leftmost = touch;
+		}
+	}
+	return leftmost->second;
+}
+#endif
+
 /**
 **  Handle interactive input event.
 **
@@ -596,19 +716,87 @@ static void SdlDoEvent(const EventCallback &callbacks, SDL_Event &event)
 
 	switch (event.type) {
 		case SDL_MOUSEBUTTONDOWN:
+#ifdef PEONPAD_IOS
+			if (event.button.which == SDL_TOUCH_MOUSEID && PeonPadSuppressTouchMouse) {
+				break;
+			}
+#endif
 			event.button.y = static_cast<int>(std::floor(event.button.y / Video.VerticalPixelSize + 0.5));
 			InputMouseButtonPress(callbacks, SDL_GetTicks(), event.button.button);
 			break;
 
 		case SDL_MOUSEBUTTONUP:
+#ifdef PEONPAD_IOS
+			if (event.button.which == SDL_TOUCH_MOUSEID && PeonPadSuppressTouchMouse) {
+				break;
+			}
+#endif
 			event.button.y = static_cast<int>(std::floor(event.button.y / Video.VerticalPixelSize + 0.5));
 			InputMouseButtonRelease(callbacks, SDL_GetTicks(), event.button.button);
 			break;
 
 		case SDL_MOUSEMOTION:
+#ifdef PEONPAD_IOS
+			if (event.motion.which == SDL_TOUCH_MOUSEID && PeonPadSuppressTouchMouse) {
+				break;
+			}
+#endif
 			event.motion.y = static_cast<int>(std::floor(event.button.y / Video.VerticalPixelSize + 0.5));
 			InputMouseMove(callbacks, SDL_GetTicks(), event.motion.x, event.motion.y);
 			break;
+
+#ifdef PEONPAD_IOS
+		case SDL_FINGERDOWN:
+			if (&callbacks != &GameCallbacks) {
+				PeonPadResetTouches();
+				break;
+			}
+			PeonPadTouches[event.tfinger.fingerId] = {event.tfinger.x, event.tfinger.y};
+			if (PeonPadTouches.size() == 2) {
+				PeonPadBeginTwoFingerCommand();
+			} else if (PeonPadTouches.size() == 3) {
+				PeonPadBeginMapPan(callbacks);
+			}
+			break;
+
+		case SDL_FINGERMOTION:
+			if (&callbacks != &GameCallbacks) {
+				PeonPadResetTouches();
+				break;
+			}
+			PeonPadTouches[event.tfinger.fingerId] = {event.tfinger.x, event.tfinger.y};
+			if (PeonPadMapPan) {
+				PeonPadMoveMapPan(callbacks);
+			} else if (PeonPadTwoFingerCommand && PeonPadTouches.size() == 2) {
+				PeonPadUpdateTwoFingerCommand();
+			}
+			break;
+
+		case SDL_FINGERUP:
+			if (&callbacks != &GameCallbacks) {
+				PeonPadResetTouches();
+				break;
+			}
+			PeonPadTouches[event.tfinger.fingerId] = {event.tfinger.x, event.tfinger.y};
+			if (PeonPadTwoFingerCommand && PeonPadTouches.size() == 2) {
+				PeonPadIssueRightClick(callbacks, PeonPadLeftmostTouch());
+				PeonPadTwoFingerCommand = false;
+			}
+			PeonPadTouches.erase(event.tfinger.fingerId);
+			if (PeonPadTouches.size() < 3) {
+				PeonPadMapPan = false;
+			}
+			if (PeonPadTouches.empty()) {
+				PeonPadSuppressTouchMouse = false;
+			}
+			break;
+
+		case SDL_APP_WILLENTERBACKGROUND:
+		case SDL_APP_DIDENTERBACKGROUND:
+		case SDL_APP_TERMINATING:
+			PeonPadResetTouches();
+			break;
+#endif
 
 		case SDL_MOUSEWHEEL:
 			{   // similar to Squeak, we fabricate Ctrl+Alt+PageUp/Down for wheel events

@@ -1764,6 +1764,16 @@ static void UIHandleButtonDown_OnMap(unsigned button)
 	}
 }
 
+void CancelMouseSelection()
+{
+	if (CursorState != CursorStates::Rectangle) {
+		return;
+	}
+	CursorStartScreenPos = {0, 0};
+	GameCursor = UI.Point.Cursor;
+	CursorState = CursorStates::Point;
+}
+
 static void UIHandleButtonDown_OnMinimap(unsigned button)
 {
 	const Vec2i cursorTilePos = UI.Minimap.ScreenToTilePos(CursorScreenPos);
@@ -2161,6 +2171,13 @@ void UIHandleButtonUp(unsigned button)
 				}
 			} else {
 				num = 0;
+#ifdef PEONPAD_IOS
+				if (!(KeyModifiers & (ModifierShift | ModifierControl | ModifierAlt))) {
+					UnSelectAll();
+					NetworkSendSelection((CUnit **)nullptr, 0);
+					SelectionChanged();
+				}
+#endif
 			}
 		}
 

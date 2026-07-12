@@ -1390,6 +1390,11 @@ void CTextField::mousePressed(gcn::MouseEvent &event) /* override */
 	TextField::mousePressed(event);
 
 	if (event.getButton() == gcn::MouseInput::Left) {
+#ifdef PEONPAD_IOS
+		// SDL starts text input before the iOS window has focus during launch.
+		// Ask again when an actual field is tapped so UIKit can show its keyboard.
+		SDL_StartTextInput();
+#endif
 		mSelectStart = mText->getCaretPosition();
 		mSelectEndOffset = 0;
 	} else if (event.getButton() == gcn::MouseInput::Middle) {

@@ -1,8 +1,53 @@
 # PeonPad build status
 
-Status captured: 2026-07-10
+Status captured: 2026-07-12
 
 Remote-to-local handoff updated: 2026-07-11
+
+Physical-device testing is now active. PeonPad has been signed with the local
+Personal Team, installed over USB, launched, and used to start King of the
+Hill, For the Motherland, and Skirmish Classic matches. The gameplay-only
+three-finger camera pan is now working in device testing. Current findings,
+content decisions, and the control design are recorded in
+[ipad-test-notes.md](ipad-test-notes.md).
+
+The private device profile now uses the existing extracted Warcraft II payload
+from `ref/data.Wargus`, staged without its redundant installer MPQ. The engine
+remains a native ARM64 iPadOS/Metal build; no Windows executable is run or
+emulated. Proprietary data remains ignored and is not part of the repository.
+
+The first delayed-touch recognizer was rejected during physical testing after
+it swallowed taps in gameplay and in-game menus. The installed recovery build
+restores SDL single-touch behavior while retaining gameplay-only multi-touch
+commands and explicit selection-rectangle cancellation.
+
+Device console capture identified the apparent Front Lines freeze as a content
+termination: the legacy map references the undefined `unit-nomad` type and the
+engine exits with code 1. Random Skirmish also reports an extended/base tileset
+brush mismatch. The private Warcraft II device menu now exposes only Skirmish
+Classic and Skirmish Modern under Standard Game; original campaigns remain
+available separately.
+
+Physical follow-up proved Beyond the Dark Portal Alliance Act I renders and
+plays correctly, including touch and camera pan. Skirmish Modern also runs, but
+its default map intentionally starts at the map edge with one peasant and can
+initially resemble an empty scene. The incompatible custom-mode files are now
+physically absent from the staged iPad payload rather than merely filtered by
+the menu widget.
+
+The current device control candidate uses one-finger selection with empty-map
+deselection, a two-finger chord for right-click commands at the leftmost
+finger's position, and three-finger drag for camera panning. Two-finger movement beyond
+a small tolerance cancels the command, and adding the third finger cancels the
+pending command before panning. The pan now has a 1.35 movement gain, and text
+fields reactivate UIKit's software keyboard when tapped. SDL's separate
+hardware keyboard, mouse, and trackpad paths remain enabled for Magic Keyboard
+and external pointer testing.
+
+Replay Game and Save Replay are hidden in the private iPad profile after device
+testing found that both legacy and newly generated logs failed to play
+reliably. The engine also retains a missing-map preflight so stale files cannot
+reach the fatal map loader if replay UI is re-enabled later.
 
 This is the handoff point for resuming the active PeonPad goal with a physical
 M2 iPad Pro. It distinguishes completed engineering from acceptance work that
@@ -70,18 +115,16 @@ Stratagus already renders through SDL2's Metal backend.
 
 ## Executive status
 
-Goals 0, 1, and 2 are complete and locally verified. Goal 3 has a complete
-unsigned device application and native Xcode project, but is not accepted
-until PeonPad launches on the physical iPad, reaches the menu, and completes an
-Aleona's Tales match. Goal 4 has deliberately not started because the phased
-build plan forbids Apple-input work before that physical Phase 2 acceptance.
+Goals 0, 1, and 2 are complete and locally verified. Goal 3 is running on the
+physical iPad: launch, menus, audio, and multiple live maps are proven, while a
+complete-match regression remains. Goal 4 has started with
+gameplay-only multi-touch controls and remains unaccepted until the device
+regression matrix passes.
 
-The current local blockers are external:
-
-- `xcrun devicectl list devices` reports `No devices found`.
-- the login keychain reports `0 valid identities found` for code signing;
-- 797 Aleona media files lack a verified redistribution grant, so the current
-  Aleona payload is local-test-only and must not be published or distributed.
+The iPad and local Personal Team signing are no longer blockers. The remaining
+content blocker is unchanged: 797 Aleona media files lack a verified
+redistribution grant, so the current Aleona payload is local-test-only and must
+not be published or distributed.
 
 ## Goal evidence
 
@@ -90,8 +133,8 @@ The current local blockers are external:
 | Goal 0 — reproducible baseline | Complete | `scripts/preflight.sh` passes; all input revisions and tools are locked; `ref/` is ignored, untracked, and unchanged. |
 | Goal 1 — macOS baseline | Complete | The PeonPad-built arm64 engine completed both a WC2 skirmish using read-only `ref/data.Wargus` and an independent Aleona match. Writable state was isolated under `runtime/`. |
 | Goal 2 — iOS arm64 libraries | Complete | Stratagus, Wargus data layer, SDL2, SDL2_image, SDL2_mixer, Lua, tolua++, zlib, PNG, Ogg, Vorbis, Theora, and the remaining confirmed dependencies build as iOS arm64 artifacts. Architecture/platform verification passes. |
-| Goal 3 — first playable iPad slice | Locally ready; device and content gates remain | Both the command-line device bundle and native Xcode Release bundle build as arm64 iOS 16.0 applications with SDK 26.5. Physical launch and match acceptance are still missing. The current Aleona snapshot is not redistribution-cleared. |
-| Goal 4 — Apple input | Not started | Starts only after Goal 3 physical acceptance, per `warcraft2-ipados-build-plan.md`. |
+| Goal 3 — first playable iPad slice | Physical regression in progress | The signed app launches on the M2 iPad; campaigns and skirmishes render and play; manual save, autosave, load, and repeated Quit-to-Menu checks pass. A complete-match regression remains. The Aleona snapshot is not redistribution-cleared. |
+| Goal 4 — Apple input | In progress | One-finger selection, leftmost-target two-finger commands, and three-finger camera pan are implemented and undergoing physical regression testing. Discoverable Shift/Control/Alt controls are designed but not implemented. |
 
 ## Phase 2 implementation proven locally
 

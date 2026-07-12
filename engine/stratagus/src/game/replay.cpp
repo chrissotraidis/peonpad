@@ -877,6 +877,11 @@ void StartReplay(const std::string &filename, bool reveal)
 {
 	CleanPlayers();
 	LoadReplay(ExpandPath(filename));
+	if (!CurrentReplay || !CanAccessFile(CurrentMapPath)) {
+		ErrorPrint("Replay is unavailable because its map is missing: '%s'\n", CurrentMapPath);
+		CleanReplayLog();
+		return;
+	}
 
 	ReplayRevealMap = reveal;
 

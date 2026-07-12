@@ -1,0 +1,40 @@
+diff --git a/scripts/guichan.lua b/scripts/guichan.lua
+--- a/scripts/guichan.lua
++++ b/scripts/guichan.lua
+@@ -1612,16 +1612,14 @@ function BuildProgramStartMenu()
+   menu:addFullButton(_("~!Multi Player Game"), "m", offx + 208, offy + 104 + 36*1,
+                      function() RunMultiPlayerGameMenu(); menu:stop(1) end)
+-  menu:addFullButton(_("~!Replay Game"), "r", offx + 208, offy + 104 + 36*2,
+-    function() RunReplayGameMenu(); menu:stop(1) end)
+-  menu:addFullButton(_("~!Options"), "o", offx + 208, offy + 104 + 36*3,
++  menu:addFullButton(_("~!Options"), "o", offx + 208, offy + 104 + 36*2,
+     function() RunOptionsSubMenu(); menu:stop(1) end)
+-  menu:addFullButton(_("~!Load Mod"), "l", offx + 208, offy + 104 + 36*4,
++  menu:addFullButton(_("~!Load Mod"), "l", offx + 208, offy + 104 + 36*3,
+     function() RunLoadModMenu(); menu:stop(1) end)
+-  menu:addFullButton(_("Map ~!Editor"), "e", offx + 208, offy + 104 + 36*5,
++  menu:addFullButton(_("Map ~!Editor"), "e", offx + 208, offy + 104 + 36*4,
+     function() RunEditorMenu(); menu:stop(1) end)
+-  menu:addFullButton(_("S~!how Credits"), "h", offx + 208, offy + 104 + 36*6, RunShowCreditsMenu)
++  menu:addFullButton(_("S~!how Credits"), "h", offx + 208, offy + 104 + 36*5, RunShowCreditsMenu)
+ 
+-  menu:addFullButton(_("E~!xit Program"), "x", offx + 208, offy + 104 + 36*7,
++  menu:addFullButton(_("E~!xit Program"), "x", offx + 208, offy + 104 + 36*6,
+     function() menu:stop() end)
+ 
+   local time = 0
+diff --git a/scripts/menus/results.lua b/scripts/menus/results.lua
+--- a/scripts/menus/results.lua
++++ b/scripts/menus/results.lua
+@@ -402,10 +402,7 @@ function RunResultsMenu(result)
+ 
+   menu:addLogicCallback(screenUpdate)
+ 
+-  menu:addFullButton(_("~!Save Replay"), "s", offx + 150, offy + 440,
+-    function() RunSaveReplayMenu() end)
+-
+-  menu:addFullButton(_("~!Continue"), "c", offx + 400, offy + 440,
++  menu:addFullButton(_("~!Continue"), "c", offx + 208, offy + 440,
+     function() 
+ 		StopMusic()
+ 		menu:stop() 

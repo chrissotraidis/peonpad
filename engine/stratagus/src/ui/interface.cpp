@@ -1394,6 +1394,13 @@ void InputMouseButtonRelease(const EventCallback &callbacks,
 	}
 }
 
+void InputMouseButtonCancel(unsigned button)
+{
+	MouseButtons &= ~(0x01010101 << button);
+	LastMouseButton = 0;
+	MouseState = InitialMouseState;
+}
+
 /**
 **  Called if the mouse is moved
 **

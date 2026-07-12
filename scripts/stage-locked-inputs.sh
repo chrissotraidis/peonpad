@@ -166,6 +166,8 @@ STRATAGUS_IOS_VIEWPORT_PATCH="$ROOT_DIR/patches/stratagus/0005-ios-metal-safe-ar
 STRATAGUS_IOS_LAUNCH_PATCH="$ROOT_DIR/patches/stratagus/0006-ios-launch-image-resource.patch"
 WARGUS_PATCH="$ROOT_DIR/patches/wargus/0001-xcode-26-apple-vendored-deps.patch"
 WARGUS_IOS_PATCH="$ROOT_DIR/patches/wargus/0002-ios-data-layer-library.patch"
+ALEONA_KOTH_PATCH="$ROOT_DIR/patches/aleonas-tales/0001-fix-king-of-the-hill-map-syntax.patch"
+ALEONA_TEST_MENU_PATCH="$ROOT_DIR/patches/aleonas-tales/0002-limit-device-test-modes.patch"
 
 # Verify every input before creating any destination.
 verify_exportable_repository "Stratagus" "sources.stratagus" "$STRATAGUS_SOURCE"
@@ -242,5 +244,19 @@ patch -s -d "$ROOT_DIR/game/wargus" -p1 < "$WARGUS_IOS_PATCH"
 print "PATCHED Wargus with the PeonPad iOS data-layer library target"
 export_repository "Aleona's Tales" "assets.aleonas_tales" \
   "$ALEONA_SOURCE" "$ROOT_DIR/assets/aleonas-tales/source"
+[[ -f "$ALEONA_KOTH_PATCH" ]] || {
+  print -u2 "required Aleona King of the Hill patch is missing"
+  exit 1
+}
+patch -s -d "$ROOT_DIR/assets/aleonas-tales/source" -p1 \
+  < "$ALEONA_KOTH_PATCH"
+print "PATCHED Aleona's Tales King of the Hill map syntax"
+[[ -f "$ALEONA_TEST_MENU_PATCH" ]] || {
+  print -u2 "required Aleona device-test menu patch is missing"
+  exit 1
+}
+patch -s -d "$ROOT_DIR/assets/aleonas-tales/source" -p1 \
+  < "$ALEONA_TEST_MENU_PATCH"
+print "PATCHED Aleona's Tales device-test mode menu"
 
 print "All locked inputs staged without modifying ref/."

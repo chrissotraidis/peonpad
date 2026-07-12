@@ -1,0 +1,11 @@
+diff --git a/maps/king/(4)tournament-forest.sms b/maps/king/(4)tournament-forest.sms
+--- a/maps/king/(4)tournament-forest.sms
++++ b/maps/king/(4)tournament-forest.sms
+@@ -16478,7 +16478,7 @@ unit = CreateUnit("unit-human-cannon-tower-super", 0, {80, 105})
+ unit = CreateUnit("unit-human-cannon-tower-super", 3, {80, 28})
+ unit = CreateUnit("unit-human-guard-tower-super", 3, {80, 30})
+-unit = CreateUnit("unit-orc-cannon-tower-super 2, {47, 21})
++unit = CreateUnit("unit-orc-cannon-tower-super", 2, {47, 21})
+ unit = CreateUnit("unit-orc-guard-tower-super", 2, {47, 30})
+ unit = CreateUnit("unit-pig-farm", 1, {44, 100})
+ unit = CreateUnit("unit-pig-farm", 1, {44, 103})

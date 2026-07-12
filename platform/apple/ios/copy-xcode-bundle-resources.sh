@@ -39,3 +39,10 @@ for icon in PeonPadIcon76.png PeonPadIcon76@2x.png PeonPadIcon83.5@2x.png; do
   "$CMAKE_COMMAND" -E copy_if_different \
     "$ICON_DIR/$icon" "$BUNDLE_PATH/$icon"
 done
+
+# Finder and cloud-backed folders can attach metadata that codesign rejects.
+if command -v xattr >/dev/null 2>&1; then
+  xattr -cr "$BUNDLE_PATH"
+  xattr -d com.apple.FinderInfo "$BUNDLE_PATH" 2>/dev/null || true
+  xattr -d 'com.apple.fileprovider.fpfs#P' "$BUNDLE_PATH" 2>/dev/null || true
+fi

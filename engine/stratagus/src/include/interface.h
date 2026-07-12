@@ -316,6 +316,10 @@ extern void HandleKeyRepeat(unsigned keycode, unsigned keychar);
 extern void InputMouseButtonPress(const EventCallback &callbacks, unsigned ticks, unsigned button);
 /// Called if any mouse button is released up
 extern void InputMouseButtonRelease(const EventCallback &callbacks, unsigned ticks, unsigned button);
+/// Cancel a pressed mouse button without invoking gameplay callbacks
+extern void InputMouseButtonCancel(unsigned button);
+/// Cancel an in-progress map selection rectangle
+extern void CancelMouseSelection();
 /// Called if the mouse is moved
 extern void InputMouseMove(const EventCallback &callbacks, unsigned ticks, int x, int y);
 /// Called if the mouse exits the game window (when supported by videomode)

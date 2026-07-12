@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1024" height="1024" viewBox="0 0 1024 1024">
   <title>PeonPad launch mark</title>
-  <desc>An original tablet-and-banner mark for PeonPad, with no game-derived artwork.</desc>
-  <rect width="1024" height="1024" fill="#151a16"/>
-  <rect x="170" y="122" width="684" height="780" rx="116" fill="#d7a536"/>
-  <rect x="206" y="158" width="612" height="708" rx="84" fill="#2d3a2d"/>
-  <rect x="254" y="216" width="516" height="474" rx="38" fill="#718446"/>
-  <path d="M254 538L380 416L474 498L592 356L770 524V690H254Z" fill="#465c33"/>
-  <path d="M254 612L366 520L454 584L552 478L650 566L712 512L770 566V690H254Z" fill="#30452d"/>
-  <path d="M346 216V690M438 216V690M530 216V690M622 216V690M714 216V690M254 308H770M254 400H770M254 492H770M254 584H770"
-        stroke="#9cac68" stroke-width="8" opacity="0.28"/>
-  <path d="M425 735H599" stroke="#151a16" stroke-width="34" stroke-linecap="round"/>
-  <path d="M512 300V478" stroke="#f4d477" stroke-width="34" stroke-linecap="round"/>
-  <path d="M529 310H674L629 368L674 426H529Z" fill="#c84b32"/>
-  <circle cx="512" cy="778" r="25" fill="#f4d477"/>
+  <desc>The original PeonPad orc icon centered on a dark amber launch background.</desc>
+  <defs>
+    <radialGradient id="background" cx="50%" cy="50%" r="70%">
+      <stop offset="0" stop-color="#70300d"/>
+      <stop offset="1" stop-color="#15100b"/>
+    </radialGradient>
+    <clipPath id="icon-mask">
+      <rect x="232" y="232" width="560" height="560" rx="112"/>
+    </clipPath>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#background)"/>
+  <image x="232" y="232" width="560" height="560"
+         clip-path="url(#icon-mask)"
+         xlink:href="PeonPadAssets.xcassets/AppIcon.appiconset/PeonPadIcon.png"/>
 </svg>

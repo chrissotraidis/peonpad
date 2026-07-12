@@ -1,0 +1,27 @@
+diff --git a/scripts/guichan.lua b/scripts/guichan.lua
+--- a/scripts/guichan.lua
++++ b/scripts/guichan.lua
+@@ -1018,6 +1018,10 @@ function RunSinglePlayerGameModeMenu()
+   menu:addLabel(_("Standard Game"), 176, 8)
+ 
+   local browser = menu:addBrowser("scripts/lists/maps/", "", 24, (24+8+8), (300+5), (318-24-8-8-24))
++  local stable_modes = {"For the Motherland", "King of the Hill", "Skirmish Classic", "Skirmish Modern"}
++  browser.itemslist = stable_modes
++  browser:setList(stable_modes)
++  browser:setSelected(0)
+ 
+   menu:addHalfButton("~!OK", "o", 48, 318,
+     function()
+diff --git a/scripts/lists/maps/For-the-Motherland b/scripts/lists/maps/For-the-Motherland
+--- a/scripts/lists/maps/For the Motherland	2026-05-18 22:31:18
++++ b/scripts/lists/maps/For the Motherland	2026-07-12 00:00:00
+@@ -350,8 +350,7 @@ function NewRunSinglePlayerGameMenu()
+       RunMap(mapname, nil, wc2.preferences.FogOfWar, false)
+       menu:stop()
+     end)
+-	--TODO: Cancel Game button doesn't work.
+-  menu:addFullButton(_("~!Cancel Game"), "c", offx + 640 - 224 - 16, offy + 360 + 36*2, function() menu:stop(1); RunSinglePlayerTypeMenu(); CleanCustomGame_Lua(); end)		
++  menu:addFullButton(_("~!Cancel Game"), "c", offx + 640 - 224 - 16, offy + 360 + 36*2, function() CleanCustomGame_Lua(); menu:stop(1); RunSinglePlayerTypeMenu() end)		
+ 				
+   local team1x = (Video.Width / 2) - 175
+   local team1y = offy + 10 + 240
