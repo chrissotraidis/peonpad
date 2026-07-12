@@ -4,9 +4,10 @@
 
 `peonpad-banner.png` is original PeonPad project artwork generated on
 2026-07-13 from a clean prompt for an independent fantasy-strategy tablet and
-worker mascot. No game screenshot, Warcraft artwork, logo, UI, character, or
-other Blizzard asset was used as an image input. The PeonPad name and supporting
-type were composited afterward.
+worker mascot, then refined with a seamless left-side vignette for readable
+type. No game screenshot, Warcraft artwork, logo, UI, character, or other
+Blizzard asset was used as an image input. The PeonPad name and supporting type
+were composited afterward.
 
 ## Device screenshots
 

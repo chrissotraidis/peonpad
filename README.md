@@ -24,9 +24,9 @@
 </p>
 
 > [!IMPORTANT]
-> **PeonPad does not include Warcraft II.** You must own the game and extract your
-> own data on a Mac or PC. Never upload, commit, or redistribute an installer,
-> MPQ, extracted `data.Wargus`, music, art, maps, or videos with this project.
+> **PeonPad does not include Warcraft II.** To play, you provide data extracted
+> from your own legally owned copy on a Mac or PC. That game content stays local
+> to your machine and is never part of the PeonPad download.
 
 ## What is PeonPad?
 
@@ -148,10 +148,10 @@ that fixture and **cannot complete the current build gate yet**. The proven USB
 deployment path therefore assumes an authorized maintainer has restored the
 fixture described by [`config/inputs.lock`](config/inputs.lock).
 
-Do not work around a failed digest with random downloads or commit the fixture
-to make it portable. Automating clean-clone hydration without weakening the
-proprietary-data boundary is an explicit release task. Once the authorized
-fixture is present, `./scripts/preflight.sh` must pass before continuing.
+Do not work around a failed digest with unverified downloads or publish the
+fixture as part of a build. Automating clean-clone hydration without weakening
+the game-data boundary is an explicit release task. Once the authorized fixture
+is present, `./scripts/preflight.sh` must pass before continuing.
 
 ### 2. Extract your own game data
 
@@ -277,6 +277,24 @@ also ARM64, but PeonPad has not adapted or accepted its UI, safe areas, touch
 density, performance or thermal behavior. iPhone support should not be claimed
 until those product and device tests exist.
 
+## What GPL-2.0 means
+
+GPL-2.0 is the open-source license for PeonPad's code. In practical terms:
+
+- You may run, study and modify PeonPad for private use.
+- You may share PeonPad, including modified versions and commercial builds.
+- If you distribute a PeonPad binary or modified version, you must make the
+  corresponding source available under GPL-2.0 and preserve the license and
+  copyright notices.
+- The software is provided without a warranty.
+
+Those permissions apply to PeonPad's GPL-covered source—not to Warcraft II game
+data, artwork, audio, video or trademarks. GPL-2.0 cannot grant rights that the
+PeonPad project does not own. Read the complete terms in [`LICENSE`](LICENSE).
+The [GNU GPL-2.0 page](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
+also provides the canonical license text and supporting material. This summary
+is explanatory, not legal advice.
+
 ## Roadmap
 
 - [x] Reproducible native Apple Silicon macOS baseline
@@ -312,9 +330,10 @@ evidence rather than replacing it with assumptions.
 
 PeonPad source code is distributed under GPL-2.0; dependency and asset notices
 live under [`LICENSES/`](LICENSES/). The generated PeonPad banner and project
-artwork are original, independent branding. The documentation screenshots are
-excluded from the source-code license; their underlying game imagery remains
-the property of its respective rights holders.
+artwork are original, independent branding. Documentation screenshots are not
+game assets and are not offered under PeonPad's source-code license; the game
+imagery visible inside them remains the property of its respective rights
+holders.
 
 Warcraft, Warcraft II, Battle.net, and Blizzard Entertainment are trademarks
 or registered trademarks of Blizzard Entertainment, Inc. All associated game
