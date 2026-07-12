@@ -5,6 +5,7 @@ set -eu
 SCRIPT_DIR=${0:A:h}
 ROOT_DIR=${SCRIPT_DIR:h}
 BUILD_DIR=${PEONPAD_IOS_XCODE_DIR:-$ROOT_DIR/build/ios-xcode}
+DATA_DIR=${PEONPAD_IOS_DATA_DIR:-$ROOT_DIR/assets/aleonas-tales/source}
 TOOLCHAIN="$ROOT_DIR/cmake/toolchains/ios-arm64.cmake"
 HOST_TOLUA=${STRATAGUS_HOST_TOLUAPP:-$ROOT_DIR/build/macos/engine/lua/src/lua-build/toluapp}
 
@@ -20,14 +21,23 @@ START_DIGEST=$($SCRIPT_DIR/reference-digest.sh)
   print -u2 "missing host tolua generator; run ./scripts/build-macos.sh first"
   exit 1
 }
+[[ -f "$DATA_DIR/scripts/stratagus.lua" ]] || {
+  print -u2 "missing iOS data payload: $DATA_DIR"
+  print -u2 "stage owned Warcraft II data with ./scripts/stage-ios-wc2-test-data.sh"
+  exit 1
+}
 [[ "$BUILD_DIR" != "/" && "$BUILD_DIR" != "$ROOT_DIR" ]] || {
   print -u2 "refusing unsafe iOS Xcode build directory: $BUILD_DIR"
   exit 1
 }
 
 if [[ "${PEONPAD_DISTRIBUTION_BUILD:-0}" == 1 ]]; then
+  [[ "$DATA_DIR" == "$ROOT_DIR/assets/aleonas-tales/source" ]] || {
+    print -u2 "distribution builds cannot embed a private game-data payload"
+    exit 1
+  }
   "$SCRIPT_DIR/audit-aleona-assets.sh" --strict
-else
+elif [[ "$DATA_DIR" == "$ROOT_DIR/assets/aleonas-tales/source" ]]; then
   "$SCRIPT_DIR/audit-aleona-assets.sh" --local-test
 fi
 
@@ -53,7 +63,7 @@ cmake --fresh -S "$ROOT_DIR/engine/stratagus" -B "$BUILD_DIR" \
   -DHAVE_STRNCPYS=OFF \
   -DSTRATAGUS_HOST_TOLUAPP="$HOST_TOLUA" \
   -DPEONPAD_IOS_INFO_PLIST="$ROOT_DIR/platform/apple/ios/Info.plist.in" \
-  -DPEONPAD_IOS_DATA_DIR="$ROOT_DIR/assets/aleonas-tales/source" \
+  -DPEONPAD_IOS_DATA_DIR="$DATA_DIR" \
   -DPEONPAD_IOS_LAUNCH_IMAGE="$ROOT_DIR/platform/apple/ios/PeonPadLaunch.png" \
   -DPEONPAD_IOS_ICON_DIR="$ROOT_DIR/platform/apple/ios" \
   -DPEONPAD_APPLE_PLATFORM_DIR="$ROOT_DIR/platform/apple"
@@ -66,6 +76,7 @@ END_DIGEST=$($SCRIPT_DIR/reference-digest.sh)
 
 print "PeonPad native Xcode project generated:"
 print "  $BUILD_DIR/stratagus.xcodeproj"
+print "  data: $DATA_DIR"
 print
 print "Open it in Xcode, select the stratagus target, choose your Personal Team"
 print "under Signing & Capabilities, select the connected iPad, then press Run."
