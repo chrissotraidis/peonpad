@@ -9,6 +9,13 @@ type. No game screenshot, Warcraft artwork, logo, UI, character, or other
 Blizzard asset was used as an image input. The PeonPad name and supporting type
 were composited afterward.
 
+## PeonPad app icon
+
+The iPad app icon is original PeonPad project artwork generated on 2026-07-13.
+It depicts two orc engineers working over a giant strategy tablet and was
+selected from four purpose-made concepts. No game screenshot, Warcraft artwork,
+logo, UI, character, or other Blizzard asset was used as an image input.
+
 ## Device screenshots
 
 The files under `screenshots/` were captured and supplied by the device owner

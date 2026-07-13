@@ -585,6 +585,11 @@ static bool isTextInput(int key) {
 }
 
 #ifdef PEONPAD_IOS
+static bool PeonPadShouldHandleKeyDirectly(const EventCallback &callbacks)
+{
+	return &callbacks == &GameCallbacks && KeyState == EKeyState::Command;
+}
+
 static std::map<SDL_FingerID, SDL_FPoint> PeonPadTouches;
 static std::map<SDL_FingerID, SDL_FPoint> PeonPadChordStart;
 static bool PeonPadMapPan = false;
@@ -896,7 +901,14 @@ static void SdlDoEvent(const EventCallback &callbacks, SDL_Event &event)
 
 		case SDL_KEYDOWN:
 			keysym = event.key.keysym.sym;
+		#ifdef PEONPAD_IOS
+			if (keysym == SDLK_BACKQUOTE) {
+				keysym = SDLK_ESCAPE;
+			}
+			if (PeonPadShouldHandleKeyDirectly(callbacks) || !isTextInput(keysym)) {
+		#else
 			if (!isTextInput(keysym)) {
+		#endif
 				// only report non-printing keys here, the characters will be reported with the textinput event
 				InputKeyButtonPress(callbacks, SDL_GetTicks(), keysym, keysym < 128 ? keysym : 0);
 			}
@@ -904,7 +916,14 @@ static void SdlDoEvent(const EventCallback &callbacks, SDL_Event &event)
 
 		case SDL_KEYUP:
 			keysym = event.key.keysym.sym;
+		#ifdef PEONPAD_IOS
+			if (keysym == SDLK_BACKQUOTE) {
+				keysym = SDLK_ESCAPE;
+			}
+			if (PeonPadShouldHandleKeyDirectly(callbacks) || !isTextInput(keysym)) {
+		#else
 			if (!isTextInput(keysym)) {
+		#endif
 				// only report non-printing keys here, the characters will be reported with the textinput event
 				InputKeyButtonRelease(callbacks, SDL_GetTicks(), keysym, keysym < 128 ? keysym : 0);
 			}
