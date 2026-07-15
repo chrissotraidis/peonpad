@@ -8,12 +8,12 @@ The iPad application Info.plist template lives in `ios/Info.plist.in`. Build
 the unsigned physical-device bundle with `scripts/build-ios-app.sh`; the
 generated bundle remains under `build/` and is never a reference input.
 
-`ios/PeonPadLaunch.svg` is the original, game-independent source for the
-PeonPad launch mark and iPad icons. The checked-in opaque PNG renditions are
-generated from that vector, declared by `Info.plist.in`, and copied into both
-the command-line and Xcode bundles. The build verifies the launch image and
-all required iPad icon renditions byte-for-byte; no Aleona, Wargus, Warcraft,
-or Blizzard artwork is used for application branding.
+`ios/PeonPadLaunch.svg` is the game-independent source for the PeonPad launch
+screen and references the canonical icon in `PeonPadAssets.xcassets`. The
+checked-in opaque launch PNG and required iPad icon renditions are declared by
+`Info.plist.in` and copied into both the command-line and Xcode bundles. The
+build verifies those resources byte-for-byte; no Aleona, Wargus, Warcraft, or
+Blizzard artwork is used for application branding.
 
 Xcode post-build commands cannot safely use CMake's generated bundle path here:
 Xcode leaves `${EFFECTIVE_PLATFORM_NAME}` escaped in that command. The small

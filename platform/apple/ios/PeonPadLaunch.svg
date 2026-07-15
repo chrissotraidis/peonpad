@@ -2,7 +2,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
      width="1024" height="1024" viewBox="0 0 1024 1024">
   <title>PeonPad launch mark</title>
-  <desc>The original PeonPad orc icon centered on a dark amber launch background.</desc>
+  <desc>The PeonPad two-orc strategy tablet icon centered on a dark amber launch background.</desc>
   <defs>
     <radialGradient id="background" cx="50%" cy="50%" r="70%">
       <stop offset="0" stop-color="#70300d"/>
