@@ -3,6 +3,10 @@
 </p>
 
 <p align="center">
+  <img src="docs/assets/screenshots/ipad-touch-demo.gif" alt="PeonPad running Warcraft II with touch controls on iPad" width="640">
+</p>
+
+<p align="center">
   <a href="LICENSE"><img alt="GPL-2.0" src="https://img.shields.io/badge/license-GPL--2.0-4b7b4b?style=flat-square"></a>
   <img alt="iPadOS 16 or newer" src="https://img.shields.io/badge/iPadOS-16%2B-1f6f78?style=flat-square">
   <img alt="Native arm64" src="https://img.shields.io/badge/runtime-native%20arm64-d0953d?style=flat-square">

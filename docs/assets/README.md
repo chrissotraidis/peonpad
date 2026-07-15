@@ -16,7 +16,7 @@ It depicts two orc engineers working over a giant strategy tablet and was
 selected from four purpose-made concepts. No game screenshot, Warcraft artwork,
 logo, UI, character, or other Blizzard asset was used as an image input.
 
-## Device screenshots
+## Device captures
 
 The files under `screenshots/` were captured and supplied by the device owner
 from a private PeonPad build using the owner's locally extracted game data.
@@ -26,8 +26,9 @@ resources or extraction inputs:
 - `ipad-skirmish.png`
 - `ipad-battle.png`
 - `ipad-title.png`
+- `ipad-touch-demo.gif`
 
-Warcraft II artwork, names, and marks visible inside these screenshots belong
+Warcraft II artwork, names, and marks visible inside these captures belong
 to Blizzard Entertainment and its licensors. Their presence does not change
 PeonPad's code/content boundary: no underlying game asset, installer, MPQ, or
 `data.Wargus` payload is present in this repository.
