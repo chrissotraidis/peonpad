@@ -1,0 +1,42 @@
+#!/bin/zsh
+
+set -eu
+
+REAL_FFMPEG=${PEONPAD_REAL_FFMPEG:?PEONPAD_REAL_FFMPEG is not set}
+ENCODER=${PEONPAD_THEORA_ENCODER:?PEONPAD_THEORA_ENCODER is not set}
+args=("$@")
+input=""
+
+for (( index = 1; index <= ${#args}; index++ )); do
+  if [[ "${args[$index]}" == -i && $index -lt ${#args} ]]; then
+    input="${args[$((index + 1))]}"
+    break
+  fi
+done
+
+[[ -n "$input" ]] || {
+  print -u2 "PeonPad Theora fallback received no -i input"
+  exit 2
+}
+
+# Wartool uses the same command name for music and cinematics. Only replace the
+# unavailable video encoder; ordinary FFmpeg must continue handling WAV/OGG.
+if [[ "${input:l}" != *.smk ]]; then
+  exec "$REAL_FFMPEG" "$@"
+fi
+
+output=${args[-1]}
+temp_dir=$(mktemp -d "${TMPDIR:-/tmp}/peonpad-theora.XXXXXX")
+trap 'rm -rf "$temp_dir"' EXIT
+
+"$REAL_FFMPEG" -hide_banner -loglevel error -y \
+  -i "$input" -an -pix_fmt yuv420p -aspect 4:3 \
+  -vf 'scale=640:0,setsar=1:1' "$temp_dir/video.y4m"
+
+# The legacy example encoder rejects FFmpeg's optional LIST/INFO RIFF chunk.
+# Bit-exact WAV output omits that metadata while preserving the PCM samples.
+"$REAL_FFMPEG" -hide_banner -loglevel error -y \
+  -i "$input" -vn -c:a pcm_s16le -fflags +bitexact "$temp_dir/audio.wav"
+
+"$ENCODER" -v 5 -a 10 -o "$output" \
+  "$temp_dir/audio.wav" "$temp_dir/video.y4m"

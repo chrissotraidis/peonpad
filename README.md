@@ -150,6 +150,10 @@ brew install innoextract ffmpeg
 ```
 
 PeonPad checks for these tools but never installs or upgrades packages for you.
+If the installed FFmpeg lacks its optional `libtheora` encoder, PeonPad
+automatically builds a small host-only fallback from the Xiph sources already
+vendored by Stratagus. Music conversion still uses the installed FFmpeg. This
+avoids requiring a second, expanded FFmpeg package solely for cinematics.
 
 ### 1. Clone PeonPad
 
@@ -187,7 +191,9 @@ Then run:
 This automated route is pinned to Warcraft II Battle.net Edition 2.02 v5,
 English, GOG build 78104. PeonPad verifies both files by SHA-256 before running
 `innoextract`, then converts the data with the `wartool` built from this repo.
-Other editions are deliberately rejected rather than guessed at.
+Other editions are deliberately rejected rather than guessed at. The command
+also verifies all 13 cinematics and 19 music tracks before staging the result,
+so an unavailable codec cannot silently produce an incomplete iPad build.
 
 **From an existing `data.Wargus`**
 
