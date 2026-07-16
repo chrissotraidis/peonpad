@@ -58,6 +58,7 @@ else
   "$SCRIPT_DIR/audit-aleona-assets.sh" --local-test
 fi
 "$SCRIPT_DIR/test-ios-viewport.sh"
+"$SCRIPT_DIR/test-ios-control-groups.sh"
 
 cmake --fresh -S "$ROOT_DIR/engine/stratagus" -B "$ENGINE_BUILD" \
   -G "Unix Makefiles" \

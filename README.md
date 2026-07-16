@@ -88,7 +88,7 @@ Entertainment and its licensors.</sub>
 | Native iPad runtime | ✅ | ARM64 iPadOS binary, SDL2 Metal renderer, landscape safe areas |
 | Warcraft II campaigns | ✅ | Original and Beyond the Dark Portal missions launch, render and play |
 | Skirmish | ✅ | Classic and Modern modes launch and play |
-| Touch input | ✅ | Selection, command chords, empty-ground deselection and camera pan |
+| Touch input | ✅ | Selection, command chords, camera pan and ten shared control groups |
 | Save/load | ✅ | Manual saves, autosaves and relaunch loading exercised on device |
 | Text entry | ✅ | iPad software keyboard appears for save names and network fields |
 | Repeated menu cycles | ✅ | Quit-to-menu regression exercised across device sessions |
@@ -115,11 +115,17 @@ a mouse-first RTS playable on glass.
 | **Tap empty terrain** | Clear the current selection |
 | **Two-finger tap** | Right-click command at the **leftmost finger** |
 | **Three-finger drag** | Pan the battlefield with a modest 1.35× gain |
+| **Control group 1–0** | Hold to assign, tap to select, double-tap to select and center |
 | **Hardware pointer/keyboard** | Native SDL input, including modifier keys |
 
 Two-finger movement beyond a small tolerance cancels the command. Adding the
 third finger cancels that pending command before camera panning begins. The
 gestures are gameplay-only, so menus keep normal iPad behavior.
+
+The compact two-row control-group bank occupies the unused lower-left gameplay
+rail. Hold a number for half a second to assign the current selection. Assigned
+groups turn gold and use the same `1` through `0` slots as a hardware keyboard,
+so touch and keyboard control groups remain interchangeable.
 
 There is no pinch-to-zoom: the classic Wargus view is fixed-scale. A visible
 Shift/Control/Alt modifier dock is designed but not yet implemented.

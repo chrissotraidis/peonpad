@@ -850,6 +850,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
 	enable_language(OBJCXX)
 	add_definitions(-DPEONPAD_IOS)
 	list(APPEND stratagus_SRCS
+		"${PEONPAD_APPLE_PLATFORM_DIR}/ios/PeonPadControlGroupLayout.cpp"
+		"${PEONPAD_APPLE_PLATFORM_DIR}/ios/PeonPadControlGroups.cpp"
 		"${PEONPAD_APPLE_PLATFORM_DIR}/ios/PeonPadViewportGeometry.cpp"
 		"${PEONPAD_APPLE_PLATFORM_DIR}/ios/PeonPadIOSViewport.mm")
 	include_directories("${PEONPAD_APPLE_PLATFORM_DIR}/ios")

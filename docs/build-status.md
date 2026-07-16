@@ -52,6 +52,13 @@ fields reactivate UIKit's software keyboard when tapped. SDL's separate
 hardware keyboard, mouse, and trackpad paths remain enabled for Magic Keyboard
 and external pointer testing.
 
+A compact `1`–`0` control-group bank now fills the unused lower-left gameplay
+rail. A 500 ms hold assigns the current selection, a tap recalls it, and a
+double-tap recalls and centers it. Assigned groups turn gold and share the
+engine's existing keyboard slots. The signed Release build was installed on the
+M2 iPad Pro on 2026-07-16, where touch assignment and recall passed physical
+acceptance without disrupting the existing gameplay gestures.
+
 Replay Game and Save Replay are hidden in the private iPad profile after device
 testing found that both legacy and newly generated logs failed to play
 reliably. The engine also retains a missing-map preflight so stale files cannot
@@ -115,7 +122,7 @@ not be published or distributed.
 | Goal 1 — macOS baseline | Complete | A clean host build produces Stratagus, Wargus, `wartool`, `pudconvert`, and the required `toluapp`; runtime state is isolated under `runtime/`. |
 | Goal 2 — iOS arm64 libraries | Complete | Stratagus, Wargus data layer, SDL2, SDL2_image, SDL2_mixer, Lua, tolua++, zlib, PNG, Ogg, Vorbis, Theora, and the remaining confirmed dependencies build as iOS arm64 artifacts. Architecture/platform verification passes. |
 | Goal 3 — first playable iPad slice | Physical regression in progress | The signed app launches on the M2 iPad; campaigns and skirmishes render and play; manual save, autosave, load, and repeated Quit-to-Menu checks pass. A complete-match regression remains. The Aleona snapshot is not redistribution-cleared. |
-| Goal 4 — Apple input | In progress | One-finger selection, leftmost-target two-finger commands, and three-finger camera pan are implemented and undergoing physical regression testing. Discoverable Shift/Control/Alt controls are designed but not implemented. |
+| Goal 4 — Apple input | In progress | One-finger selection, leftmost-target two-finger commands, three-finger camera pan, and shared `1`–`0` touch control groups are implemented. The control-group bank passed physical iPad acceptance; broader regression and the planned Shift/Control/Alt controls remain. |
 
 ## Phase 2 implementation proven locally
 

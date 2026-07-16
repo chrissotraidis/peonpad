@@ -54,6 +54,9 @@ class CUIButton;
 class CUnit;
 struct EventCallback;
 
+bool UiAssignControlGroup(unsigned group);
+bool UiSelectControlGroup(unsigned group, bool center);
+
 /*----------------------------------------------------------------------------
 --  Definitons
 ----------------------------------------------------------------------------*/

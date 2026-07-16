@@ -54,6 +54,10 @@
 #include "video.h"
 #include "parameters.h"
 
+#ifdef PEONPAD_IOS
+#include "PeonPadControlGroups.h"
+#endif
+
 #ifdef HAVE_COZ_PROFILER
 # include <coz.h>
 #endif
@@ -218,6 +222,9 @@ void UpdateDisplay()
 			UI.StatusLine.Draw();
 			UI.StatusLine.DrawCosts();
 			UI.ButtonPanel.Draw();
+#ifdef PEONPAD_IOS
+			PeonPadDrawControlGroups();
+#endif
 		}
 
 		DrawTimer();

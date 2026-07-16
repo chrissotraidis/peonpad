@@ -101,6 +101,11 @@ Current implementation:
   command;
 - a three-finger drag pans the camera directly and cancels any pending
   two-finger command;
+- a gameplay-only two-row bank exposes control groups `1` through `0` in the
+  unused lower-left rail. Holding for 500 ms assigns the current selection,
+  tapping recalls it, and double-tapping recalls and centers it;
+- assigned control groups use a gold state and share the engine's existing
+  keyboard group slots, allowing seamless touch and hardware-keyboard use;
 - multi-touch gestures are gameplay-only, never invoke menu callbacks, and
   reset when the app backgrounds or leaves gameplay;
 - Pencil and hardware pointer behavior remain unchanged;
@@ -166,3 +171,5 @@ scenario expands the list rather than requiring dropdown scrolling.
 10. Confirm Replay Game is absent from the main menu and Save Replay is absent
     from the results screen. Replay playback remains deferred rather than
     presenting files that cannot be used reliably.
+11. Assign, recall, and center several control groups by touch; confirm their
+    gold state tracks the same numbered groups when using a hardware keyboard.
