@@ -348,7 +348,7 @@ is explanatory, not legal advice.
 - [ ] Accept Magic Keyboard, mouse and trackpad combinations on hardware
 - [ ] Test local and online multiplayer on iPad
 - [ ] Repair or replace replay playback
-- [ ] Validate the public installer route from an unrelated clean clone
+- [x] Validate the public installer route from an unrelated clean clone
 - [ ] Find a redistribution-cleared libre content path
 
 ## Contributing

@@ -1,6 +1,6 @@
 # PeonPad build status
 
-Status updated: 2026-07-15
+Status updated: 2026-07-16
 
 Remote-to-local handoff updated: 2026-07-11
 
@@ -20,8 +20,9 @@ The public preparation path no longer requires the private `ref/` fixture.
 `scripts/prepare-ipad-build.sh` accepts either the exact validated English GOG
 Battle.net Edition 2.02 installer pair or an existing `data.Wargus`, builds the
 host tools, stages the payload, and generates the native Xcode project. The
-already-extracted route has completed locally from a clean host build tree. A
-true unrelated clean clone and the raw-installer branch remain acceptance work.
+already-extracted and raw-installer routes have now completed from an unrelated
+clean GitHub clone. The raw route was verified through extraction, macOS smoke
+testing, staging, and an unsigned ARM64 iPadOS 16 Release build.
 
 The first delayed-touch recognizer was rejected during physical testing after
 it swallowed taps in gameplay and in-game menus. The installed recovery build
