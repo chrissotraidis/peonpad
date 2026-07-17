@@ -266,6 +266,9 @@ static void UiAddGroupToSelection(unsigned group)
 */
 static void UiDefineGroup(unsigned group)
 {
+	if (Selected.empty()) {
+		return;
+	}
 	for (CUnit *unit : Selected) {
 		if (unit->Player == ThisPlayer && unit->GroupId) {
 			RemoveUnitFromGroups(*unit);
@@ -281,7 +284,32 @@ static void UiDefineGroup(unsigned group)
 */
 static void UiAddToGroup(unsigned group)
 {
+	if (Selected.empty()) {
+		return;
+	}
 	AddToGroup(&Selected[0], Selected.size(), group);
+}
+
+bool UiAssignControlGroup(const unsigned group)
+{
+	if (group >= 10 || Selected.empty()) {
+		return false;
+	}
+	UiDefineGroup(group);
+	return true;
+}
+
+bool UiSelectControlGroup(const unsigned group, const bool center)
+{
+	if (group >= 10 || GetUnitsOfGroup(group).empty()) {
+		return false;
+	}
+	if (center) {
+		UiCenterOnGroup(group);
+	} else {
+		UiSelectGroup(group);
+	}
+	return true;
 }
 
 /**

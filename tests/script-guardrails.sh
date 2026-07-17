@@ -123,6 +123,7 @@ cp -cR "$ROOT_DIR/engine/stratagus" "$PATCH_CHAIN_ENGINE"
 # The patches form an ordered series, so validate composition by reversing the
 # complete staged series and then applying it again in the stage-script order.
 for patch_file in \
+  0008-ios-control-groups.patch \
   0007-build-host-toluapp.patch \
   0006-ios-launch-image-resource.patch \
   0005-ios-metal-safe-area-viewport.patch \
@@ -145,6 +146,8 @@ for patch_file in \
 done
 patch --no-backup-if-mismatch -s -d "$PATCH_CHAIN_ENGINE" -p1 \
   < "$ROOT_DIR/patches/stratagus/0007-build-host-toluapp.patch"
+patch --no-backup-if-mismatch -s -d "$PATCH_CHAIN_ENGINE" -p1 \
+  < "$ROOT_DIR/patches/stratagus/0008-ios-control-groups.patch"
 diff --no-dereference -qr \
   "$ROOT_DIR/engine/stratagus" "$PATCH_CHAIN_ENGINE" >/dev/null
 cmake -E remove_directory "$PATCH_CHAIN_ROOT"

@@ -58,6 +58,7 @@
 #include <SDL_syswm.h>
 
 #ifdef PEONPAD_IOS
+#include "PeonPadControlGroups.h"
 #include "PeonPadIOSViewport.h"
 #endif
 
@@ -595,6 +596,7 @@ static std::map<SDL_FingerID, SDL_FPoint> PeonPadChordStart;
 static bool PeonPadMapPan = false;
 static bool PeonPadSuppressTouchMouse = false;
 static bool PeonPadTwoFingerCommand = false;
+static bool PeonPadControlGroupGesture = false;
 static SDL_FPoint PeonPadPanCenter;
 
 static SDL_FPoint PeonPadTouchCenter()
@@ -623,6 +625,8 @@ static void PeonPadResetTouches()
 	PeonPadMapPan = false;
 	PeonPadSuppressTouchMouse = false;
 	PeonPadTwoFingerCommand = false;
+	PeonPadControlGroupGesture = false;
+	PeonPadControlGroupsReset();
 }
 
 static void PeonPadBeginMapPan(const EventCallback &callbacks)
@@ -725,6 +729,12 @@ static void SdlDoEvent(const EventCallback &callbacks, SDL_Event &event)
 			if (event.button.which == SDL_TOUCH_MOUSEID && PeonPadSuppressTouchMouse) {
 				break;
 			}
+			if (event.button.which != SDL_TOUCH_MOUSEID && event.button.button == SDL_BUTTON_LEFT
+			    && &callbacks == &GameCallbacks
+			    && PeonPadControlGroupsPointerDown(-1, event.button.x, event.button.y,
+			                                         SDL_GetTicks())) {
+				break;
+			}
 #endif
 			event.button.y = static_cast<int>(std::floor(event.button.y / Video.VerticalPixelSize + 0.5));
 			InputMouseButtonPress(callbacks, SDL_GetTicks(), event.button.button);
@@ -735,6 +745,11 @@ static void SdlDoEvent(const EventCallback &callbacks, SDL_Event &event)
 			if (event.button.which == SDL_TOUCH_MOUSEID && PeonPadSuppressTouchMouse) {
 				break;
 			}
+			if (event.button.which != SDL_TOUCH_MOUSEID && event.button.button == SDL_BUTTON_LEFT
+			    && PeonPadControlGroupsPointerUp(-1, event.button.x, event.button.y,
+			                                       SDL_GetTicks())) {
+				break;
+			}
 #endif
 			event.button.y = static_cast<int>(std::floor(event.button.y / Video.VerticalPixelSize + 0.5));
 			InputMouseButtonRelease(callbacks, SDL_GetTicks(), event.button.button);
@@ -743,6 +758,10 @@ static void SdlDoEvent(const EventCallback &callbacks, SDL_Event &event)
 		case SDL_MOUSEMOTION:
 #ifdef PEONPAD_IOS
 			if (event.motion.which == SDL_TOUCH_MOUSEID && PeonPadSuppressTouchMouse) {
+				break;
+			}
+			if (event.motion.which != SDL_TOUCH_MOUSEID
+			    && PeonPadControlGroupsPointerMove(-1, event.motion.x, event.motion.y)) {
 				break;
 			}
 #endif
@@ -757,6 +776,20 @@ static void SdlDoEvent(const EventCallback &callbacks, SDL_Event &event)
 				break;
 			}
 			PeonPadTouches[event.tfinger.fingerId] = {event.tfinger.x, event.tfinger.y};
+			if (PeonPadControlGroupGesture) {
+				PeonPadControlGroupsCancel();
+				PeonPadSuppressTouchMouse = true;
+				break;
+			}
+			if (&callbacks == &GameCallbacks) {
+				const PixelPos pos = PeonPadScreenPos({event.tfinger.x, event.tfinger.y});
+				if (PeonPadControlGroupsPointerDown(event.tfinger.fingerId,
+				                                      pos.x, pos.y, SDL_GetTicks())) {
+					PeonPadControlGroupGesture = true;
+					PeonPadSuppressTouchMouse = true;
+					break;
+				}
+			}
 			if (PeonPadTouches.size() == 2) {
 				PeonPadBeginTwoFingerCommand();
 			} else if (PeonPadTouches.size() == 3) {
@@ -770,6 +803,11 @@ static void SdlDoEvent(const EventCallback &callbacks, SDL_Event &event)
 				break;
 			}
 			PeonPadTouches[event.tfinger.fingerId] = {event.tfinger.x, event.tfinger.y};
+			if (PeonPadControlGroupGesture) {
+				const PixelPos pos = PeonPadScreenPos({event.tfinger.x, event.tfinger.y});
+				PeonPadControlGroupsPointerMove(event.tfinger.fingerId, pos.x, pos.y);
+				break;
+			}
 			if (PeonPadMapPan) {
 				PeonPadMoveMapPan(callbacks);
 			} else if (PeonPadTwoFingerCommand && PeonPadTouches.size() == 2) {
@@ -783,6 +821,17 @@ static void SdlDoEvent(const EventCallback &callbacks, SDL_Event &event)
 				break;
 			}
 			PeonPadTouches[event.tfinger.fingerId] = {event.tfinger.x, event.tfinger.y};
+			if (PeonPadControlGroupGesture) {
+				const PixelPos pos = PeonPadScreenPos({event.tfinger.x, event.tfinger.y});
+				PeonPadControlGroupsPointerUp(event.tfinger.fingerId,
+				                                    pos.x, pos.y, SDL_GetTicks());
+				PeonPadTouches.erase(event.tfinger.fingerId);
+				if (PeonPadTouches.empty()) {
+					PeonPadControlGroupGesture = false;
+					PeonPadSuppressTouchMouse = false;
+				}
+				break;
+			}
 			if (PeonPadTwoFingerCommand && PeonPadTouches.size() == 2) {
 				PeonPadIssueRightClick(callbacks, PeonPadLeftmostTouch());
 				PeonPadTwoFingerCommand = false;
@@ -986,6 +1035,9 @@ void WaitEventsOneFrame()
 	}
 
 	InputMouseTimeout(*GetCallbacks(), ticks);
+#ifdef PEONPAD_IOS
+	PeonPadControlGroupsUpdate(ticks);
+#endif
 	InputKeyTimeout(*GetCallbacks(), ticks);
 	CursorAnimate(ticks);
 

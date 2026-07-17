@@ -165,6 +165,7 @@ STRATAGUS_IOS_XCODE_PATCH="$ROOT_DIR/patches/stratagus/0004-ios-xcode-external-g
 STRATAGUS_IOS_VIEWPORT_PATCH="$ROOT_DIR/patches/stratagus/0005-ios-metal-safe-area-viewport.patch"
 STRATAGUS_IOS_LAUNCH_PATCH="$ROOT_DIR/patches/stratagus/0006-ios-launch-image-resource.patch"
 STRATAGUS_HOST_TOLUA_PATCH="$ROOT_DIR/patches/stratagus/0007-build-host-toluapp.patch"
+STRATAGUS_IOS_CONTROL_GROUPS_PATCH="$ROOT_DIR/patches/stratagus/0008-ios-control-groups.patch"
 WARGUS_PATCH="$ROOT_DIR/patches/wargus/0001-xcode-26-apple-vendored-deps.patch"
 WARGUS_IOS_PATCH="$ROOT_DIR/patches/wargus/0002-ios-data-layer-library.patch"
 ALEONA_KOTH_PATCH="$ROOT_DIR/patches/aleonas-tales/0001-fix-king-of-the-hill-map-syntax.patch"
@@ -236,6 +237,13 @@ print "PATCHED Stratagus to bundle the PeonPad launch image"
 patch -s -d "$ROOT_DIR/engine/stratagus" -p1 \
   < "$STRATAGUS_HOST_TOLUA_PATCH"
 print "PATCHED Stratagus to build the host tolua generator from a clean tree"
+[[ -f "$STRATAGUS_IOS_CONTROL_GROUPS_PATCH" ]] || {
+  print -u2 "required Stratagus iOS control-groups patch is missing"
+  exit 1
+}
+patch -s -d "$ROOT_DIR/engine/stratagus" -p1 \
+  < "$STRATAGUS_IOS_CONTROL_GROUPS_PATCH"
+print "PATCHED Stratagus with the PeonPad iOS touch control-group integration"
 export_repository "Wargus" "sources.wargus" \
   "$WARGUS_SOURCE" "$ROOT_DIR/game/wargus"
 [[ -f "$WARGUS_PATCH" ]] || {

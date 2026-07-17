@@ -1,6 +1,6 @@
 # PeonPad build status
 
-Status updated: 2026-07-15
+Status updated: 2026-07-16
 
 Remote-to-local handoff updated: 2026-07-11
 
@@ -20,8 +20,9 @@ The public preparation path no longer requires the private `ref/` fixture.
 `scripts/prepare-ipad-build.sh` accepts either the exact validated English GOG
 Battle.net Edition 2.02 installer pair or an existing `data.Wargus`, builds the
 host tools, stages the payload, and generates the native Xcode project. The
-already-extracted route has completed locally from a clean host build tree. A
-true unrelated clean clone and the raw-installer branch remain acceptance work.
+already-extracted and raw-installer routes have now completed from an unrelated
+clean GitHub clone. The raw route was verified through extraction, macOS smoke
+testing, staging, and an unsigned ARM64 iPadOS 16 Release build.
 
 The first delayed-touch recognizer was rejected during physical testing after
 it swallowed taps in gameplay and in-game menus. The installed recovery build
@@ -50,6 +51,13 @@ pending command before panning. The pan now has a 1.35 movement gain, and text
 fields reactivate UIKit's software keyboard when tapped. SDL's separate
 hardware keyboard, mouse, and trackpad paths remain enabled for Magic Keyboard
 and external pointer testing.
+
+A compact `1`–`0` control-group bank now fills the unused lower-left gameplay
+rail. A 500 ms hold assigns the current selection, a tap recalls it, and a
+double-tap recalls and centers it. Assigned groups turn gold and share the
+engine's existing keyboard slots. The signed Release build was installed on the
+M2 iPad Pro on 2026-07-16, where touch assignment and recall passed physical
+acceptance without disrupting the existing gameplay gestures.
 
 Replay Game and Save Replay are hidden in the private iPad profile after device
 testing found that both legacy and newly generated logs failed to play
@@ -114,7 +122,7 @@ not be published or distributed.
 | Goal 1 — macOS baseline | Complete | A clean host build produces Stratagus, Wargus, `wartool`, `pudconvert`, and the required `toluapp`; runtime state is isolated under `runtime/`. |
 | Goal 2 — iOS arm64 libraries | Complete | Stratagus, Wargus data layer, SDL2, SDL2_image, SDL2_mixer, Lua, tolua++, zlib, PNG, Ogg, Vorbis, Theora, and the remaining confirmed dependencies build as iOS arm64 artifacts. Architecture/platform verification passes. |
 | Goal 3 — first playable iPad slice | Physical regression in progress | The signed app launches on the M2 iPad; campaigns and skirmishes render and play; manual save, autosave, load, and repeated Quit-to-Menu checks pass. A complete-match regression remains. The Aleona snapshot is not redistribution-cleared. |
-| Goal 4 — Apple input | In progress | One-finger selection, leftmost-target two-finger commands, and three-finger camera pan are implemented and undergoing physical regression testing. Discoverable Shift/Control/Alt controls are designed but not implemented. |
+| Goal 4 — Apple input | In progress | One-finger selection, leftmost-target two-finger commands, three-finger camera pan, and shared `1`–`0` touch control groups are implemented. The control-group bank passed physical iPad acceptance; broader regression and the planned Shift/Control/Alt controls remain. |
 
 ## Phase 2 implementation proven locally
 

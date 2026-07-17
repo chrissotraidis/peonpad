@@ -243,11 +243,16 @@ static int CclSetVideoResolution(lua_State *l)
 {
 	LuaCheckArgs(l, 2);
 	if (CclInConfigFile) {
+#ifdef PEONPAD_IOS
+		Video.Width = 800;
+		Video.Height = 600;
+#else
 		// May have been set from the command line
 		if (!Video.Width || !Video.Height) {
 			Video.Width = LuaToNumber(l, 1);
 			Video.Height = LuaToNumber(l, 2);
 		}
+#endif
 	}
 	return 0;
 }
