@@ -13,6 +13,7 @@ THEORA_LOG="$TEST_ROOT/theora.log"
 cmake -E remove_directory "$TEST_ROOT"
 cmake -E make_directory "$FAKE_BIN" "$OUTPUT_DIR"
 cmake -E create_symlink "$ROOT_DIR/tests/fixtures/fake-ffmpeg.sh" "$FAKE_BIN/ffmpeg"
+cmake -E create_symlink "$ROOT_DIR/tests/fixtures/fake-ffprobe.sh" "$FAKE_BIN/ffprobe"
 
 PEONPAD_FAKE_FFMPEG_MODE=native \
 PEONPAD_FAKE_FFMPEG_LOG="$FFMPEG_LOG" \
@@ -64,9 +65,22 @@ for name in $music; do
   print 'fake music' > "$MEDIA_DIR/music/$name.ogg"
 done
 
-"$ROOT_DIR/scripts/validate-wartool-media.sh" "$MEDIA_DIR" >/dev/null
+PATH="$FAKE_BIN:$PATH" \
+  "$ROOT_DIR/scripts/validate-wartool-media.sh" "$MEDIA_DIR" >/dev/null
+
+if PEONPAD_FAKE_FFPROBE_MODE=invalid PATH="$FAKE_BIN:$PATH" \
+    "$ROOT_DIR/scripts/validate-wartool-media.sh" "$MEDIA_DIR" >/dev/null 2>&1; then
+  print -u2 "media validator accepted a malformed cinematic"
+  exit 1
+fi
+
+warning=$(PATH=/usr/bin:/bin \
+  "$ROOT_DIR/scripts/validate-wartool-media.sh" "$MEDIA_DIR" 2>&1 >/dev/null)
+grep -Fq 'warning: ffprobe is unavailable; checking media presence only' <<< "$warning"
+
 cmake -E remove -f "$MEDIA_DIR/videos/logo.ogv"
-if "$ROOT_DIR/scripts/validate-wartool-media.sh" "$MEDIA_DIR" >/dev/null 2>&1; then
+if PATH="$FAKE_BIN:$PATH" \
+    "$ROOT_DIR/scripts/validate-wartool-media.sh" "$MEDIA_DIR" >/dev/null 2>&1; then
   print -u2 "media validator accepted a missing cinematic"
   exit 1
 fi
