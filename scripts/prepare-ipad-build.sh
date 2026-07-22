@@ -137,6 +137,8 @@ if [[ "$MODE" == installer ]]; then
     [[ -d "$DATA_DIR" ]] || fail "data.Wargus exists but is not a directory: $DATA_DIR"
     validate_data "$DATA_DIR" || \
       fail "refusing to overwrite incomplete data.Wargus; move or remove it first"
+    "$SCRIPT_DIR/validate-wartool-media.sh" "$DATA_DIR" || \
+      fail "existing data.Wargus has incomplete media; move or remove it and run again"
     print "Using existing validated data.Wargus: $DATA_DIR"
   else
     mkdir -p "$ROOT_DIR/build"
@@ -157,8 +159,11 @@ if [[ "$MODE" == installer ]]; then
     done
 
     print "Converting Warcraft II data with PeonPad's wartool..."
-    "$ROOT_DIR/build/macos/wargus/wartool" -v -r "$ARCHIVE_DIR" "$TEMP_DATA"
+    "$SCRIPT_DIR/run-wartool-with-ffmpeg.sh" \
+      "$ROOT_DIR/build/macos/wargus/wartool" -v -r "$ARCHIVE_DIR" "$TEMP_DATA"
     validate_data "$TEMP_DATA" || fail "wartool did not produce a complete data.Wargus"
+    "$SCRIPT_DIR/validate-wartool-media.sh" "$TEMP_DATA" || \
+      fail "wartool did not convert all cinematics and music"
     mv "$TEMP_DATA" "$DATA_DIR"
     print "Created ignored game-data directory: $DATA_DIR"
   fi

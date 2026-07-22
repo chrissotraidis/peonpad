@@ -39,6 +39,7 @@ if "$ROOT_DIR/scripts/prepare-ipad-build.sh" --installer missing.exe \
   print -u2 "prepare script accepted multiple input modes"
   exit 1
 fi
+"$ROOT_DIR/tests/ffmpeg-fallback.sh" >/dev/null
 
 IOS_PLIST="$ROOT_DIR/platform/apple/ios/Info.plist.in"
 plutil -lint "$IOS_PLIST" >/dev/null
