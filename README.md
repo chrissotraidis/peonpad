@@ -330,6 +330,11 @@ also ARM64, but PeonPad has not adapted or accepted its UI, safe areas, touch
 density, performance or thermal behavior. iPhone support should not be claimed
 until those product and device tests exist.
 
+A physical iPhone 14 bring-up confirmed that the arm64 app can install and
+launch, while also exposing the expected layout and multitouch gaps. See
+[`docs/iphone-bringup-notes.md`](docs/iphone-bringup-notes.md) for the findings,
+likely input-transform issue, proposed adaptation stages and acceptance gates.
+
 ## What GPL-2.0 means
 
 GPL-2.0 is the open-source license for PeonPad's code. In practical terms:
