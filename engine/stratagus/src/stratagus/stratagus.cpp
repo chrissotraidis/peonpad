@@ -208,6 +208,11 @@ extern void beos_init(int argc, char **argv);
 #include "widgets.h"
 #include "util.h"
 
+#ifdef PEONPAD_IOS
+#include "PeonPadGameDataPath.h"
+#include "PeonPadIOSDataPath.h"
+#endif
+
 #include "missile.h" //for FreeBurningBuildingFrames
 
 #include <SDL.h>
@@ -713,16 +718,19 @@ try {
 	SetupConsole();
 #endif
 	//  Setup some defaults.
-	#ifdef PEONPAD_IOS
-		if (char *basePath = SDL_GetBasePath()) {
-			StratagusLibPath = (fs::path(basePath) / "Aleona").string();
-			SDL_free(basePath);
-		} else {
-			StratagusLibPath = ".";
-		}
-	#elif !defined(MAC_BUNDLE)
-		StratagusLibPath = ".";
-	#else
+#ifdef PEONPAD_IOS
+	std::string dataPathReason;
+	StratagusLibPath = PeonPadSelectGameDataPath(
+		PeonPadIOSDocumentsGameDataPath(),
+		PeonPadIOSBundledGameDataPath(),
+		&dataPathReason);
+	if (StratagusLibPath.empty()) {
+		PeonPadIOSShowGameDataSetupMessage(dataPathReason);
+		return EXIT_FAILURE;
+	}
+#elif !defined(MAC_BUNDLE)
+	StratagusLibPath = ".";
+#else
 	freopen("/tmp/stdout.txt", "w", stdout);
 	freopen("/tmp/stderr.txt", "w", stderr);
 	// Look for the specified data set inside the application bundle

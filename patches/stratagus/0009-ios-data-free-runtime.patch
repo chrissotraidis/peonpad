@@ -1,0 +1,110 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 7b6d8b68..8937f6a4 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -53,6 +53,7 @@ set(PEONPAD_IOS_DATA_DIR "" CACHE PATH "Game data copied into the PeonPad iOS bu
+ set(PEONPAD_IOS_LAUNCH_IMAGE "" CACHE FILEPATH "PeonPad launch image copied into the iOS bundle")
+ set(PEONPAD_IOS_ICON_DIR "" CACHE PATH "PeonPad iPad icon files copied into the iOS bundle")
+ set(PEONPAD_APPLE_PLATFORM_DIR "" CACHE PATH "PeonPad Apple platform integration sources")
++set(PEONPAD_SOURCE_PREFIX_MAP "" CACHE PATH "Source prefix removed from release binaries")
+ option(BUILD_VENDORED_SDL OFF)
+ option(BUILD_VENDORED_MEDIA_LIBS OFF)
+ option(DOWNLOAD_FREEPATS OFF)
+@@ -849,7 +850,12 @@ if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+ 	endif()
+ 	enable_language(OBJCXX)
+ 	add_definitions(-DPEONPAD_IOS)
++	if(PEONPAD_SOURCE_PREFIX_MAP)
++		add_compile_options("-ffile-prefix-map=${PEONPAD_SOURCE_PREFIX_MAP}=.")
++	endif()
+ 	list(APPEND stratagus_SRCS
++		"${PEONPAD_APPLE_PLATFORM_DIR}/ios/PeonPadGameDataPath.cpp"
++		"${PEONPAD_APPLE_PLATFORM_DIR}/ios/PeonPadIOSDataPath.mm"
+ 		"${PEONPAD_APPLE_PLATFORM_DIR}/ios/PeonPadControlGroupLayout.cpp"
+ 		"${PEONPAD_APPLE_PLATFORM_DIR}/ios/PeonPadControlGroups.cpp"
+ 		"${PEONPAD_APPLE_PLATFORM_DIR}/ios/PeonPadViewportGeometry.cpp"
+@@ -1265,7 +1271,6 @@ if(BUILD_VENDORED_SDL)
+ 				MACOSX_BUNDLE_INFO_PLIST "${PEONPAD_IOS_INFO_PLIST}")
+ 		endif()
+ 		if(CMAKE_GENERATOR STREQUAL "Xcode"
+-		   AND PEONPAD_IOS_DATA_DIR
+ 		   AND PEONPAD_IOS_LAUNCH_IMAGE
+ 		   AND PEONPAD_IOS_ICON_DIR)
+ 			set(PEONPAD_XCODE_RESOURCE_SCRIPT
+diff --git a/src/stratagus/stratagus.cpp b/src/stratagus/stratagus.cpp
+index 6d447ffc..f51b4b57 100644
+--- a/src/stratagus/stratagus.cpp
++++ b/src/stratagus/stratagus.cpp
+@@ -208,6 +208,11 @@ extern void beos_init(int argc, char **argv);
+ #include "widgets.h"
+ #include "util.h"
+ 
++#ifdef PEONPAD_IOS
++#include "PeonPadGameDataPath.h"
++#include "PeonPadIOSDataPath.h"
++#endif
++
+ #include "missile.h" //for FreeBurningBuildingFrames
+ 
+ #include <SDL.h>
+@@ -713,16 +718,19 @@ try {
+ 	SetupConsole();
+ #endif
+ 	//  Setup some defaults.
+-	#ifdef PEONPAD_IOS
+-		if (char *basePath = SDL_GetBasePath()) {
+-			StratagusLibPath = (fs::path(basePath) / "Aleona").string();
+-			SDL_free(basePath);
+-		} else {
+-			StratagusLibPath = ".";
+-		}
+-	#elif !defined(MAC_BUNDLE)
+-		StratagusLibPath = ".";
+-	#else
++#ifdef PEONPAD_IOS
++	std::string dataPathReason;
++	StratagusLibPath = PeonPadSelectGameDataPath(
++		PeonPadIOSDocumentsGameDataPath(),
++		PeonPadIOSBundledGameDataPath(),
++		&dataPathReason);
++	if (StratagusLibPath.empty()) {
++		PeonPadIOSShowGameDataSetupMessage(dataPathReason);
++		return EXIT_FAILURE;
++	}
++#elif !defined(MAC_BUNDLE)
++	StratagusLibPath = ".";
++#else
+ 	freopen("/tmp/stdout.txt", "w", stdout);
+ 	freopen("/tmp/stderr.txt", "w", stderr);
+ 	// Look for the specified data set inside the application bundle
+diff --git a/third-party/CMakeLists.txt b/third-party/CMakeLists.txt
+index 68eecf57..292908ac 100644
+--- a/third-party/CMakeLists.txt
++++ b/third-party/CMakeLists.txt
+@@ -40,6 +40,14 @@ if(APPLE)
+     endif()
+   endforeach()
+ endif()
++if(PEONPAD_SOURCE_PREFIX_MAP)
++  list(APPEND STRATAGUS_EXTERNAL_CMAKE_ARGS
++    "-DCMAKE_C_FLAGS:STRING=-ffile-prefix-map=${PEONPAD_SOURCE_PREFIX_MAP}=."
++    "-DCMAKE_CXX_FLAGS:STRING=-ffile-prefix-map=${PEONPAD_SOURCE_PREFIX_MAP}=."
++    "-DCMAKE_OBJC_FLAGS:STRING=-ffile-prefix-map=${PEONPAD_SOURCE_PREFIX_MAP}=."
++    "-DCMAKE_OBJCXX_FLAGS:STRING=-ffile-prefix-map=${PEONPAD_SOURCE_PREFIX_MAP}=."
++  )
++endif()
+ set(STRATAGUS_EXTERNAL_CMAKE_ARGS "${STRATAGUS_EXTERNAL_CMAKE_ARGS}" PARENT_SCOPE)
+ set(STRATAGUS_EXTERNAL_GENERATOR_ARGS "${STRATAGUS_EXTERNAL_GENERATOR_ARGS}" PARENT_SCOPE)
+ 
+@@ -692,6 +700,10 @@ macro(vendored_guisan)
+     ${CMAKE_CURRENT_MACRO_LIST_DIR}/guisan/src/widgets/window.cpp
+   )
+   add_library(guisan_lib STATIC ${guisan_SRCS})
+   target_include_directories(guisan_lib SYSTEM PUBLIC ${CMAKE_CURRENT_MACRO_LIST_DIR}/guisan/include ${SDL2_INCLUDE_DIR})
++  if(PEONPAD_SOURCE_PREFIX_MAP)
++    target_compile_options(guisan_lib PRIVATE
++      "-ffile-prefix-map=${PEONPAD_SOURCE_PREFIX_MAP}=.")
++  endif()
+   if (BUILD_VENDORED_SDL)
+     add_dependencies(guisan_lib SDL2)
+   endif()

@@ -46,16 +46,17 @@ Your legally owned game media
             ▼  extract on desktop with Wargus tooling
     local data.Wargus folder        never tracked by Git
             │
-            ▼  private staging copy
-    native iPadOS application       ARM64 + SDL2 + Metal
+            ▼  copy after installation through Files/Finder
+    PeonPad Documents/data.Wargus   private app-container data
             │
             ▼
         your iPad over USB
 ```
 
 This repository is currently a **developer preview**. A signed build has been
-installed and exercised on a physical M2 iPad Pro, but there is no App Store
-release, downloadable IPA, or in-app content importer yet.
+installed and exercised on a physical M2 iPad Pro. The unsigned preview IPA is
+data-free and requires user-side signing plus a separately copied `data.Wargus`;
+there is no App Store, TestFlight, or in-app content importer yet.
 
 ## See it running
 
@@ -96,7 +97,8 @@ Entertainment and its licensors.</sub>
 | Hardware keyboard/mouse | 🧪 | Native SDL paths are retained; Magic Keyboard acceptance is pending |
 | Multiplayer | 🧪 | Engine support exists; local and online play are unverified on iPad |
 | Replay playback | ⏸️ | Hidden in the private iPad profile until legacy playback is reliable |
-| In-app Files import | 🧭 | Planned; current developer builds stage data on the Mac |
+| Files-visible game data | ✅ | Loads validated `Documents/data.Wargus` copied after installation |
+| In-app folder picker | 🧭 | Planned; Preview 1 uses the Files-visible app folder |
 
 The private Warcraft II profile exposes original campaigns plus Skirmish
 Classic and Skirmish Modern. Incompatible legacy custom modes are deliberately
@@ -130,7 +132,24 @@ so touch and keyboard control groups remain interchangeable.
 There is no pinch-to-zoom: the classic Wargus view is fixed-scale. A visible
 Shift/Control/Alt modifier dock is designed but not yet implemented.
 
-## Build and run on an iPad
+## Install or build for an iPad
+
+### Unsigned preview IPA
+
+The GitHub prerelease contains an unsigned, re-signable IPA with no Warcraft II
+or Aleona game data. Sign and install it with your preferred iOS sideloading
+workflow, then copy your complete extracted folder to:
+
+```text
+On My iPad/PeonPad/data.Wargus
+```
+
+PeonPad validates `scripts/stratagus.lua`, the extraction marker, graphics,
+maps, and sounds at launch. If the folder is missing or incomplete, it shows the
+required location and exits without starting the engine. See
+[`docs/INSTALL_IPA.md`](docs/INSTALL_IPA.md) for the complete flow.
+
+### Source build
 
 ### What you need
 
@@ -253,13 +272,13 @@ developer build, not to stream or host gameplay.
 ./scripts/build-macos.sh
 PEONPAD_WC2_DATA_DIR="/path/to/data.Wargus" \
   ./scripts/stage-ios-wc2-test-data.sh
-./scripts/generate-ios-xcode.sh
+./scripts/generate-ios-xcode.sh --local-data build/ios-wc2-data
 open build/ios-xcode/stratagus.xcodeproj
 ```
 
-`generate-ios-xcode.sh` defaults to the staged `build/ios-wc2-data` payload.
-The one-command preparation script runs this same sequence and adds installer
-extraction when `--installer` is selected.
+The explicit `--local-data` mode is private development only. The one-command
+preparation script runs this same sequence and adds installer extraction when
+`--installer` is selected.
 </details>
 
 <details>
@@ -359,6 +378,8 @@ is explanatory, not legal advice.
 - [x] Physical-device iPadOS ARM64 build through SDL2 and Metal
 - [x] Campaigns, skirmishes, touch commands, camera pan and software keyboard
 - [x] Save/load and repeated quit-to-menu device checks
+- [x] Build an audited, data-free unsigned IPA from public source
+- [x] Load validated `data.Wargus` from the Files-visible app folder
 - [ ] Complete and record a full match regression
 - [ ] Add an in-app Files picker and validation for owned `data.Wargus`
 - [ ] Ship discoverable Shift/Control/Alt touch modifiers

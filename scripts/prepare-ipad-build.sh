@@ -171,7 +171,7 @@ if [[ "$MODE" == installer ]]; then
 fi
 
 PEONPAD_WC2_DATA_DIR="$INPUT_PATH" "$SCRIPT_DIR/stage-ios-wc2-test-data.sh"
-"$SCRIPT_DIR/generate-ios-xcode.sh"
+"$SCRIPT_DIR/generate-ios-xcode.sh" --local-data "$ROOT_DIR/build/ios-wc2-data"
 
 print
 print "PeonPad is ready for Xcode:"

@@ -1,16 +1,15 @@
 # iPad test status and product decisions
 
-Status captured: 2026-07-12
+Status captured: 2026-08-18
 
 ## Product target and test content
 
 PeonPad targets **Warcraft II through Wargus**, not Warcraft III. The engine
 cannot run Warcraft III content.
 
-The distributable vertical-slice configuration boots Aleona's Tales because it
-is the only complete non-Blizzard payload available without an import step. It
-is a test payload, not a disguised or expanded edition of Warcraft II. Its
-current asset audit also prevents distribution.
+The distributable app contains no game payload. Aleona's Tales remains a local
+development payload, not a disguised or expanded edition of Warcraft II, and
+its current asset audit prevents bundling it in a release.
 
 For private USB testing, an ignored local Warcraft II runtime is supplied as
 `data.Wargus`. A device-only staging copy excludes
@@ -32,13 +31,14 @@ The iPad runs Stratagus as a native ARM64 iPadOS executable with SDL2 and
 Metal. The Windows installer `.exe`, `.bin`, and MPQ are source material for
 data extraction; they are not executed or emulated on iPad.
 
-The intended product flow is therefore explicit content selection:
+The intended product flow is therefore explicit user-owned content setup:
 
-1. **Import Warcraft II data** — select a locally extracted `data.Wargus`
-   folder through Files. This is the authentic Warcraft II campaign/skirmish
-   path and remains the primary project goal.
-2. **Play the free content** — launch a license-cleared libre game when one is
-   available. Aleona's Tales fills this role only during local development.
+1. Install the unsigned PeonPad IPA with a compatible sideloading tool.
+2. Copy a locally extracted `data.Wargus` folder to
+   `On My iPad > PeonPad > data.Wargus` through Files or Finder, then relaunch.
+3. If a license-cleared libre game becomes available later, add it as a
+   separate, auditable content option. Aleona's Tales fills this role only
+   during local development today.
 
 PeonPad must not silently present Aleona as Warcraft, copy Warcraft artwork
 into Aleona, or bundle Blizzard data. Until the importer exists, development

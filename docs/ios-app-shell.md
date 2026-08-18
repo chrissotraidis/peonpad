@@ -1,23 +1,23 @@
 # Phase 2 iPad app shell
 
-The first PeonPad physical-device application now builds as an unsigned arm64
-iOS bundle:
+PeonPad now has a separate unsigned, data-free distribution build:
 
 ```sh
-./scripts/build-ios-app.sh
+./scripts/build-ios-release.sh
 ```
 
 Output:
 
 ```text
-build/ios-arm64/engine/PeonPad.app
+build/ios-release-xcode/Release-iphoneos/PeonPad.app
 ```
 
 The build is native iOS (`LC_BUILD_VERSION` platform 2), targets iPadOS 16.0,
 and links the vendored SDL2 engine as a Metal-capable SDL application. The
-bundle is landscape-only, enables indirect pointer input, writes preferences
-and saves through `SDL_GetPrefPath`, and locates its bundled game scripts from
-`SDL_GetBasePath()/Aleona`.
+bundle is landscape-only, enables indirect pointer input, and writes
+preferences and saves through `SDL_GetPrefPath`. At launch it validates
+`Documents/data.Wargus`; a bundled `Aleona` directory is accepted only in an
+explicit local-data development build.
 
 The system launch screen displays the original PeonPad tablet-and-banner mark,
 and the bundle includes matching opaque 76-point, Retina 76-point, and
@@ -39,18 +39,18 @@ The platform-independent viewport calculation is covered by:
 
 ## Content boundary
 
-The script fails if an MPQ, installer, `WAR2DAT.MPQ`, or `data.Wargus`
-directory appears in the application. It also verifies the locked `ref/`
-digest before and after every build.
+The distribution audit fails if an MPQ, installer, `WAR2DAT.MPQ`,
+`data.Wargus`, `Aleona`, signing material, a non-system dynamic dependency, or
+a local build path appears in the application. It also requires the project
+and third-party license notices, release identity, arm64/iOS 16 metadata, and
+Files document-sharing keys.
 
-The current Aleona snapshot is approved only for local development testing.
-Its aggregate repository is GPLv2, but the per-file art, audio, map, and
-vendored Wyrmsun provenance audit remains
-`REVIEW_REQUIRED_BEFORE_BUNDLING`. Do not distribute this application bundle
-until that audit is complete. The reproducible findings and remediation paths
-are recorded in [aleona-asset-audit.md](aleona-asset-audit.md). Setting
-`PEONPAD_DISTRIBUTION_BUILD=1` makes both iOS entry points run the strict audit
-and refuse the current snapshot.
+The current Aleona snapshot remains approved only for local development
+testing. Its aggregate repository is GPLv2, but the per-file art, audio, map,
+and vendored Wyrmsun provenance audit remains
+`REVIEW_REQUIRED_BEFORE_BUNDLING`. The distribution build solves that boundary
+by omitting Aleona entirely; the findings remain recorded in
+[aleona-asset-audit.md](aleona-asset-audit.md).
 
 ## Proven locally
 
@@ -62,7 +62,8 @@ and refuse the current snapshot.
 icons, and the build verifies that every declared raster is in the bundle.
 - Xcode resource copying uses `TARGET_BUILD_DIR` and `WRAPPER_NAME`, avoiding
   CMake's incorrectly escaped `${EFFECTIVE_PLATFORM_NAME}` post-build path.
-- Aleona scripts and media are present; no Blizzard-derived data is present.
+- The distribution app contains no game-data directory. The explicit
+  local-data mode can still embed ignored test data for private development.
 - The final executable links successfully with SDL2, SDL2_image, SDL2_mixer,
   Lua, and the vendored media libraries.
 - Both the Makefile device build and a clean native Xcode Release build contain
@@ -73,11 +74,11 @@ icons, and the build verifies that every declared raster is in the bundle.
 
 ## Remaining Phase 2 acceptance
 
-After staging owned Warcraft II data, generate the native Xcode project used
-for automatic personal-team signing with:
+For a private development build that embeds owned Warcraft II data, generate
+the native Xcode project used for automatic personal-team signing with:
 
 ```sh
-./scripts/generate-ios-xcode.sh
+./scripts/generate-ios-xcode.sh --local-data build/ios-wc2-data
 open build/ios-xcode/stratagus.xcodeproj
 ```
 
@@ -86,8 +87,9 @@ choose your Personal Team. Select the connected iPad as the run destination
 and press Run. This uses only Xcode and the Apple account stored by Xcode; no
 third-party credential tool is involved.
 
-The generator defaults to ignored `build/ios-wc2-data` and removes its
-script-owned build tree first so stale
+The generator requires either `--distribution` or `--local-data PATH`; it
+never infers that release data may be bundled. It removes its script-owned
+build tree first so stale
 ExternalProject caches cannot retain an incompatible CMake generator. The
 generated project has been proven through a complete unsigned Xcode Release
 build. Its top-level PeonPad target is native Xcode while vendored
