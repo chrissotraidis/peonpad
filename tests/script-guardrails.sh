@@ -40,6 +40,7 @@ if "$ROOT_DIR/scripts/prepare-ipad-build.sh" --installer missing.exe \
   exit 1
 fi
 "$ROOT_DIR/tests/ffmpeg-fallback.sh" >/dev/null
+"$ROOT_DIR/scripts/test-ios-game-data-path.sh" >/dev/null
 
 IOS_PLIST="$ROOT_DIR/platform/apple/ios/Info.plist.in"
 plutil -lint "$IOS_PLIST" >/dev/null
@@ -47,6 +48,8 @@ plutil -lint "$IOS_PLIST" >/dev/null
     "PeonPadLaunch" ]]
 [[ "$(plutil -extract 'CFBundleIcons~ipad'.CFBundlePrimaryIcon.CFBundleIconFiles.0 raw \
     "$IOS_PLIST")" == "PeonPadIcon76" ]]
+[[ "$(plutil -extract UIFileSharingEnabled raw "$IOS_PLIST")" == "true" ]]
+[[ "$(plutil -extract LSSupportsOpeningDocumentsInPlace raw "$IOS_PLIST")" == "true" ]]
 
 verify_png() {
   local file=$1 expected_width=$2 expected_height=$3
@@ -84,6 +87,20 @@ cmp -s "$ROOT_DIR/platform/apple/ios/PeonPadLaunch.png" \
   "$RESOURCE_APP/PeonPadLaunch.png"
 cmp -s "$ROOT_DIR/platform/apple/ios/PeonPadIcon83.5@2x.png" \
   "$RESOURCE_APP/PeonPadIcon83.5@2x.png"
+cmp -s "$ROOT_DIR/LICENSE" "$RESOURCE_APP/LICENSE"
+cmp -s "$ROOT_DIR/THIRD_PARTY_NOTICES.md" \
+  "$RESOURCE_APP/THIRD_PARTY_NOTICES.md"
+[[ -f "$RESOURCE_APP/Licenses/SDL2-LICENSE.txt" ]]
+
+RESOURCE_DATA_FREE_PRODUCTS="$RESOURCE_TEST_ROOT/data-free-products/Release-iphoneos"
+TARGET_BUILD_DIR="$RESOURCE_DATA_FREE_PRODUCTS" WRAPPER_NAME="PeonPad.app" \
+  "$ROOT_DIR/platform/apple/ios/copy-xcode-bundle-resources.sh" \
+  "$(command -v cmake)" "" \
+  "$ROOT_DIR/platform/apple/ios/PeonPadLaunch.png" \
+  "$ROOT_DIR/platform/apple/ios"
+DATA_FREE_APP="$RESOURCE_DATA_FREE_PRODUCTS/PeonPad.app"
+[[ ! -e "$DATA_FREE_APP/Aleona" ]]
+cmp -s "$ROOT_DIR/NOTICE" "$DATA_FREE_APP/NOTICE"
 cmake -E remove_directory "$RESOURCE_TEST_ROOT"
 
 if [[ "$MODE" == maintainer ]]; then
@@ -123,6 +140,7 @@ cp -cR "$ROOT_DIR/engine/stratagus" "$PATCH_CHAIN_ENGINE"
 # The patches form an ordered series, so validate composition by reversing the
 # complete staged series and then applying it again in the stage-script order.
 for patch_file in \
+  0009-ios-data-free-runtime.patch \
   0008-ios-control-groups.patch \
   0007-build-host-toluapp.patch \
   0006-ios-launch-image-resource.patch \
@@ -148,6 +166,8 @@ patch --no-backup-if-mismatch -s -d "$PATCH_CHAIN_ENGINE" -p1 \
   < "$ROOT_DIR/patches/stratagus/0007-build-host-toluapp.patch"
 patch --no-backup-if-mismatch -s -d "$PATCH_CHAIN_ENGINE" -p1 \
   < "$ROOT_DIR/patches/stratagus/0008-ios-control-groups.patch"
+patch --no-backup-if-mismatch -s -d "$PATCH_CHAIN_ENGINE" -p1 \
+  < "$ROOT_DIR/patches/stratagus/0009-ios-data-free-runtime.patch"
 diff --no-dereference -qr \
   "$ROOT_DIR/engine/stratagus" "$PATCH_CHAIN_ENGINE" >/dev/null
 cmake -E remove_directory "$PATCH_CHAIN_ROOT"

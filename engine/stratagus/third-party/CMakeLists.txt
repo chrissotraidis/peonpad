@@ -40,6 +40,14 @@ if(APPLE)
     endif()
   endforeach()
 endif()
+if(PEONPAD_SOURCE_PREFIX_MAP)
+  list(APPEND STRATAGUS_EXTERNAL_CMAKE_ARGS
+    "-DCMAKE_C_FLAGS:STRING=-ffile-prefix-map=${PEONPAD_SOURCE_PREFIX_MAP}=."
+    "-DCMAKE_CXX_FLAGS:STRING=-ffile-prefix-map=${PEONPAD_SOURCE_PREFIX_MAP}=."
+    "-DCMAKE_OBJC_FLAGS:STRING=-ffile-prefix-map=${PEONPAD_SOURCE_PREFIX_MAP}=."
+    "-DCMAKE_OBJCXX_FLAGS:STRING=-ffile-prefix-map=${PEONPAD_SOURCE_PREFIX_MAP}=."
+  )
+endif()
 set(STRATAGUS_EXTERNAL_CMAKE_ARGS "${STRATAGUS_EXTERNAL_CMAKE_ARGS}" PARENT_SCOPE)
 set(STRATAGUS_EXTERNAL_GENERATOR_ARGS "${STRATAGUS_EXTERNAL_GENERATOR_ARGS}" PARENT_SCOPE)
 
@@ -694,6 +702,10 @@ macro(vendored_guisan)
   )
   add_library(guisan_lib STATIC ${guisan_SRCS})
   target_include_directories(guisan_lib SYSTEM PUBLIC ${CMAKE_CURRENT_MACRO_LIST_DIR}/guisan/include ${SDL2_INCLUDE_DIR})
+  if(PEONPAD_SOURCE_PREFIX_MAP)
+    target_compile_options(guisan_lib PRIVATE
+      "-ffile-prefix-map=${PEONPAD_SOURCE_PREFIX_MAP}=.")
+  endif()
   if (BUILD_VENDORED_SDL)
     add_dependencies(guisan_lib SDL2)
   endif()

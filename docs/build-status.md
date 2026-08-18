@@ -1,6 +1,6 @@
 # PeonPad build status
 
-Status updated: 2026-07-16
+Status updated: 2026-08-18
 
 Remote-to-local handoff updated: 2026-07-11
 
@@ -10,6 +10,20 @@ Hill, For the Motherland, and Skirmish Classic matches. The gameplay-only
 three-finger camera pan is now working in device testing. Current findings,
 content decisions, and the control design are recorded in
 [ipad-test-notes.md](ipad-test-notes.md).
+
+The publication path is now deliberately data-free. The unsigned Release app
+is built with `./scripts/build-ios-release.sh`, audited, and packaged with
+`./scripts/package-ios.sh`. It contains the native engine, PeonPad artwork, and
+license notices, but no Aleona, Warcraft II data, installer, save, signing
+material, or private build input. Users copy their own extracted Wargus data
+to `Documents/data.Wargus` through Files or Finder after installation.
+
+The complete data-free device flow passed on the M2 iPad Pro on 2026-08-18.
+An in-place build 4 install preserved the existing app container; an empty
+Documents directory displayed the expected setup message; a 1,998-file owned
+`data.Wargus` transfer read back byte-for-byte; and relaunch reached the
+Warcraft II title and main menu. Existing preference key/value pairs were
+unchanged (the engine only rewrote their order).
 
 The public device profile now accepts an ignored root-level or external
 `data.Wargus`, staged without its redundant installer MPQ. The engine
@@ -109,10 +123,11 @@ complete-match regression remains. Goal 4 has started with
 gameplay-only multi-touch controls and remains unaccepted until the device
 regression matrix passes.
 
-The iPad and local Personal Team signing are no longer blockers. The remaining
-content blocker is unchanged: 797 Aleona media files lack a verified
-redistribution grant, so the current Aleona payload is local-test-only and must
-not be published or distributed.
+The iPad and local Personal Team signing are no longer blockers. The 797
+unresolved Aleona media files remain local-test-only, but they no longer block
+publication because the distribution artifact cannot contain Aleona. Release
+still requires every artifact, clean-build, and physical-device gate in
+[RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md).
 
 ## Goal evidence
 
@@ -134,20 +149,20 @@ The current iOS app includes:
 - landscape-left and landscape-right iPad orientations;
 - `UIApplicationSupportsIndirectInputEvents = YES`;
 - application-container writable state through `SDL_GetPrefPath`;
-- bundled-data discovery through `SDL_GetBasePath()/Aleona`;
+- user-data discovery through `Documents/data.Wargus`, with
+  `SDL_GetBasePath()/Aleona` retained only for explicit private-development
+  builds;
 - original PeonPad launch artwork and opaque iPad icon renditions containing no
   game-derived branding;
-- an application-bundle scan that rejects MPQs, installers, `data.Wargus`, and
-  other proprietary Warcraft II inputs.
+- an application-bundle audit that rejects MPQs, installers, `data.Wargus`,
+  Aleona, signing material, local build paths, and private inputs.
 
-The Xcode route received an additional fix during the final audit. CMake 3.27
-escaped Xcode's `${EFFECTIVE_PLATFORM_NAME}` in a post-build bundle path,
-placing Aleona and artwork in a literal, incorrect directory. The
-`platform/apple/ios/copy-xcode-bundle-resources.sh` bridge now uses Xcode's
-authoritative `TARGET_BUILD_DIR` and `WRAPPER_NAME`. A clean unsigned Xcode
-Release build and an incremental build both succeeded, and the real
-`Release-iphoneos/PeonPad.app` now contains Aleona plus every declared launch
-and icon resource.
+The Xcode resource bridge uses Xcode's authoritative `TARGET_BUILD_DIR` and
+`WRAPPER_NAME`. Distribution mode copies only PeonPad artwork and legal files;
+local-data mode additionally copies the explicitly selected ignored data
+directory. Release compilation maps the checkout prefix out of the engine and
+vendored dependencies so the audited executable does not disclose a
+maintainer path.
 
 Local application artifacts, intentionally excluded from Git, are:
 
@@ -155,6 +170,7 @@ Local application artifacts, intentionally excluded from Git, are:
 build/ios-arm64/engine/PeonPad.app
 build/ios-xcode/Release-iphoneos/PeonPad.app
 build/ios-xcode/stratagus.xcodeproj
+build/ios-release-xcode/Release-iphoneos/PeonPad.app
 ```
 
 Both executables are arm64 Mach-O files with `LC_BUILD_VERSION` platform iOS,
@@ -188,9 +204,8 @@ The following remain local and must never be committed or pushed:
 The Aleona audit inspected 2,849 media files: 2,037 are covered by the vendored
 Wyrmsun declaration, 15 non-vendor files have explicit grants, 112 have author
 attribution without a license grant, and 685 lack adjacent provenance. The
-unresolved total is 797. `PEONPAD_DISTRIBUTION_BUILD=1` makes both iOS build
-entry points run the strict audit and stop before compilation. See
-`aleona-asset-audit.md` for evidence and remediation paths.
+unresolved total is 797. It therefore remains excluded from every distribution
+artifact. See `aleona-asset-audit.md` for evidence and remediation paths.
 
 ## Resume checklist for the physical iPad
 

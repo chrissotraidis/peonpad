@@ -53,6 +53,7 @@ set(PEONPAD_IOS_DATA_DIR "" CACHE PATH "Game data copied into the PeonPad iOS bu
 set(PEONPAD_IOS_LAUNCH_IMAGE "" CACHE FILEPATH "PeonPad launch image copied into the iOS bundle")
 set(PEONPAD_IOS_ICON_DIR "" CACHE PATH "PeonPad iPad icon files copied into the iOS bundle")
 set(PEONPAD_APPLE_PLATFORM_DIR "" CACHE PATH "PeonPad Apple platform integration sources")
+set(PEONPAD_SOURCE_PREFIX_MAP "" CACHE PATH "Source prefix removed from release binaries")
 option(BUILD_VENDORED_SDL OFF)
 option(BUILD_VENDORED_MEDIA_LIBS OFF)
 option(DOWNLOAD_FREEPATS OFF)
@@ -849,7 +850,12 @@ if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
 	endif()
 	enable_language(OBJCXX)
 	add_definitions(-DPEONPAD_IOS)
+	if(PEONPAD_SOURCE_PREFIX_MAP)
+		add_compile_options("-ffile-prefix-map=${PEONPAD_SOURCE_PREFIX_MAP}=.")
+	endif()
 	list(APPEND stratagus_SRCS
+		"${PEONPAD_APPLE_PLATFORM_DIR}/ios/PeonPadGameDataPath.cpp"
+		"${PEONPAD_APPLE_PLATFORM_DIR}/ios/PeonPadIOSDataPath.mm"
 		"${PEONPAD_APPLE_PLATFORM_DIR}/ios/PeonPadControlGroupLayout.cpp"
 		"${PEONPAD_APPLE_PLATFORM_DIR}/ios/PeonPadControlGroups.cpp"
 		"${PEONPAD_APPLE_PLATFORM_DIR}/ios/PeonPadViewportGeometry.cpp"
@@ -1265,7 +1271,6 @@ if(BUILD_VENDORED_SDL)
 				MACOSX_BUNDLE_INFO_PLIST "${PEONPAD_IOS_INFO_PLIST}")
 		endif()
 		if(CMAKE_GENERATOR STREQUAL "Xcode"
-		   AND PEONPAD_IOS_DATA_DIR
 		   AND PEONPAD_IOS_LAUNCH_IMAGE
 		   AND PEONPAD_IOS_ICON_DIR)
 			set(PEONPAD_XCODE_RESOURCE_SCRIPT
