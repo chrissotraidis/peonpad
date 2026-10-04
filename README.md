@@ -11,6 +11,9 @@
   <img alt="iPadOS 16 or newer" src="https://img.shields.io/badge/iPadOS-16%2B-1f6f78?style=flat-square">
   <img alt="Native arm64" src="https://img.shields.io/badge/runtime-native%20arm64-d0953d?style=flat-square">
   <img alt="Physical device tested" src="https://img.shields.io/badge/device-M2%20iPad%20tested-4b7b4b?style=flat-square">
+  <a href="https://github.com/chrissotraidis/padmint"><img alt="PeonPad setup in PadMint" src="https://img.shields.io/badge/PadMint-guided%20setup-3EB489?style=flat-square"></a>
+  <img alt="Game data not included" src="https://img.shields.io/badge/game%20data-not%20included-FF453A?style=flat-square">
+  <a href="https://discord.gg/xwHfUD2bxW"><img alt="Join the PeonPad Discord" src="https://img.shields.io/badge/Discord-Join%20the%20community-5865F2?logo=discord&amp;logoColor=white&amp;style=flat-square"></a>
 </p>
 
 <p align="center">
@@ -31,6 +34,13 @@
 > **PeonPad does not include Warcraft II.** To play, you provide data extracted
 > from your own legally owned copy on a Mac or PC. That game content stays local
 > to your machine and is never part of the PeonPad download.
+
+> [!NOTE]
+> **AI disclosure:** PeonPad uses substantial AI assistance for code, tests,
+> documentation, debugging and maintenance. Some support replies and maintenance
+> tasks are automated. There is no audited percentage of AI-generated code.
+> Build, test and device records describe what was checked. This disclosure
+> concerns PeonPad's workflow, not the authorship of its upstream projects.
 
 ## What is PeonPad?
 
@@ -404,6 +414,16 @@ iPad changes also require an actual device pass; simulator or compiler success
 is not enough. Start with [`docs/build-status.md`](docs/build-status.md) and
 [`docs/ipad-test-notes.md`](docs/ipad-test-notes.md), then record new device
 evidence rather than replacing it with assumptions.
+
+## Community and support
+
+[Join the Discord](https://discord.gg/xwHfUD2bxW) for help and news. It is one
+community for PeonPad and its sibling projects, such as KartPad, BlueWake and
+MeleePad: ask about setup and installing, share how it runs on your device, and
+hear about new releases first.
+
+Found a bug? [Open an issue](https://github.com/chrissotraidis/peonpad/issues)
+with your device, its OS version, and the steps that led to it.
 
 ## License and trademarks
 
