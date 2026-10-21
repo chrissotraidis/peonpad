@@ -88,6 +88,12 @@ git_tree = "cd761811c5cbe907635aca6f81b9b9425872a3b6"
 source_sha256 = "af728cf8ec4ff79493a761149361c7ef89d93857dac90f7113579c8a0f620f19"
 license = "Zlib"
 
+[dependencies.sdl2_ios]
+revision = "c6756fcd3de8090a8f72ac1a0b6fb6e50f0021d1"
+remote = "https://github.com/chrissotraidis/SDL.git"
+license = "Zlib"
+note = "iOS builds only: SDL 2.32.10 plus the Pad ports UIKit scene startup commit, so apps built with the iOS 27 SDK open on iOS 27. Fetched by scripts/fetch-scene-sdl.sh into ignored build/deps; other platforms keep the vendored 2.0.22."
+
 [dependencies.sdl2_image]
 revision = "2.6.1"
 git_tree = "d082484e78c47dae0236a7aa8bd226b55528d9dc"
