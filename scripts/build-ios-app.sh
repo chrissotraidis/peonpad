@@ -66,6 +66,7 @@ cmake --fresh -S "$ROOT_DIR/engine/stratagus" -B "$ENGINE_BUILD" \
   -DCMAKE_BUILD_TYPE=Release \
   -DBUILD_VENDORED_LUA=ON \
   -DBUILD_VENDORED_SDL=ON \
+  -DSTRATAGUS_SDL_SOURCE_DIR="$("$ROOT_DIR/scripts/fetch-scene-sdl.sh")" \
   -DBUILD_VENDORED_MEDIA_LIBS=ON \
   -DBUILD_TESTING=OFF \
   -DDOWNLOAD_FREEPATS=OFF \

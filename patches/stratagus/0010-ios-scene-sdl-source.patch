@@ -1,0 +1,27 @@
+diff --git a/third-party/CMakeLists.txt b/third-party/CMakeLists.txt
+index 19dd3022..b2eb5c27 100644
+--- a/third-party/CMakeLists.txt
++++ b/third-party/CMakeLists.txt
+@@ -366,7 +366,12 @@ macro(vendored_sdl)
+   if(NOT DEFINED USE_VENDORED_SDL)
+     set(USE_VENDORED_SDL true)
+ 
+-    file(GLOB SDL_HEADERS "${CMAKE_CURRENT_MACRO_LIST_DIR}/SDL/include/*.h")
++    # iOS builds pass SDL 2.32.10 with UIKit scene startup here: apps built with
++    # the iOS 27 SDK must start through scenes or iOS 27 closes them at launch.
++    if(NOT STRATAGUS_SDL_SOURCE_DIR)
++      set(STRATAGUS_SDL_SOURCE_DIR "${CMAKE_CURRENT_MACRO_LIST_DIR}/SDL")
++    endif()
++    file(GLOB SDL_HEADERS "${STRATAGUS_SDL_SOURCE_DIR}/include/*.h")
+     if (MSVC)
+       set(EXTRA_SDL_CMAKE_ARGS -DSDL_LIBC=ON)
+     endif()
+@@ -383,7 +388,7 @@ macro(vendored_sdl)
+     endif()
+     ExternalProject_Add(SDL2
+       ${STRATAGUS_EXTERNAL_GENERATOR_ARGS}
+-      SOURCE_DIR "${CMAKE_CURRENT_MACRO_LIST_DIR}/SDL"
++      SOURCE_DIR "${STRATAGUS_SDL_SOURCE_DIR}"
+       PREFIX "${CMAKE_CURRENT_BINARY_DIR}/SDL2/"
+       INSTALL_COMMAND cmake -E copy ${SDL_HEADERS} "${CMAKE_CURRENT_BINARY_DIR}/SDL2/src/SDL2-build/include"
+       CMAKE_ARGS ${STRATAGUS_EXTERNAL_CMAKE_ARGS} -DBUILD_SHARED_LIBS=OFF -DSDL_STATIC_PIC=ON -DSDL_STATIC=ON ${EXTRA_SDL_CMAKE_ARGS}
