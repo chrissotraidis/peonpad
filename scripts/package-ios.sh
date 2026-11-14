@@ -7,7 +7,7 @@ SCRIPT_DIR=${0:A:h}
 ROOT_DIR=${SCRIPT_DIR:h}
 APP=${1:-$ROOT_DIR/build/ios-release-xcode/Release-iphoneos/PeonPad.app}
 APP=${APP:A}
-RELEASE_NAME=${PEONPAD_RELEASE_NAME:-0.1.0-preview.1}
+RELEASE_NAME=${PEONPAD_RELEASE_NAME:-0.1.0-preview.2}
 OUTPUT=${2:-$ROOT_DIR/artifacts/PeonPad-$RELEASE_NAME-unsigned.ipa}
 OUTPUT=${OUTPUT:A}
 

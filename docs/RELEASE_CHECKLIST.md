@@ -32,7 +32,7 @@
 
 ## Publication
 
-- [ ] Tag `v0.1.0-preview.1` points to the reviewed release commit.
+- [ ] Tag `v0.1.0-preview.2` points to the reviewed release commit.
 - [ ] GitHub release is marked prerelease and documents unsigned/user-data terms.
 - [ ] Downloaded IPA and checksum match the locally audited artifact.
 - [ ] `main`, `origin/main`, the release tag, and hosted source are verified.

@@ -13,7 +13,7 @@ is not signed for a particular Apple account.
 
 ## Install and add game data
 
-1. Download `PeonPad-0.1.0-preview.1-unsigned.ipa` and its checksum from the
+1. Download `PeonPad-0.1.0-preview.2-unsigned.ipa` and its checksum from the
    matching GitHub prerelease.
 2. Verify the SHA-256 checksum.
 3. Sign and install the IPA. It is not directly installable until signed.

@@ -27,7 +27,7 @@ plutil -lint "$APP/Info.plist" >/dev/null || fail "Info.plist is invalid"
     "org.peonpad.ios" ]] || fail "unexpected bundle identifier"
 [[ "$(plutil -extract CFBundleShortVersionString raw "$APP/Info.plist")" == \
     "0.1.0" ]] || fail "unexpected bundle version"
-[[ "$(plutil -extract CFBundleVersion raw "$APP/Info.plist")" == "4" ]] || \
+[[ "$(plutil -extract CFBundleVersion raw "$APP/Info.plist")" == "5" ]] || \
   fail "unexpected bundle build"
 for key in UIFileSharingEnabled LSSupportsOpeningDocumentsInPlace; do
   [[ "$(plutil -extract "$key" raw "$APP/Info.plist")" == "true" ]] || \
