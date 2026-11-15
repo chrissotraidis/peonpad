@@ -167,6 +167,8 @@ STRATAGUS_IOS_LAUNCH_PATCH="$ROOT_DIR/patches/stratagus/0006-ios-launch-image-re
 STRATAGUS_HOST_TOLUA_PATCH="$ROOT_DIR/patches/stratagus/0007-build-host-toluapp.patch"
 STRATAGUS_IOS_CONTROL_GROUPS_PATCH="$ROOT_DIR/patches/stratagus/0008-ios-control-groups.patch"
 STRATAGUS_IOS_DATA_FREE_PATCH="$ROOT_DIR/patches/stratagus/0009-ios-data-free-runtime.patch"
+STRATAGUS_IOS_SCENE_SDL_PATCH="$ROOT_DIR/patches/stratagus/0010-ios-scene-sdl-source.patch"
+STRATAGUS_IOS_FATAL_ERRORS_PATCH="$ROOT_DIR/patches/stratagus/0011-ios-visible-fatal-errors.patch"
 WARGUS_PATCH="$ROOT_DIR/patches/wargus/0001-xcode-26-apple-vendored-deps.patch"
 WARGUS_IOS_PATCH="$ROOT_DIR/patches/wargus/0002-ios-data-layer-library.patch"
 ALEONA_KOTH_PATCH="$ROOT_DIR/patches/aleonas-tales/0001-fix-king-of-the-hill-map-syntax.patch"
@@ -252,6 +254,20 @@ print "PATCHED Stratagus with the PeonPad iOS touch control-group integration"
 patch -s -d "$ROOT_DIR/engine/stratagus" -p1 \
   < "$STRATAGUS_IOS_DATA_FREE_PATCH"
 print "PATCHED Stratagus with the PeonPad data-free iOS runtime integration"
+[[ -f "$STRATAGUS_IOS_SCENE_SDL_PATCH" ]] || {
+  print -u2 "required Stratagus iOS scene SDL source patch is missing"
+  exit 1
+}
+patch -s -d "$ROOT_DIR/engine/stratagus" -p1 \
+  < "$STRATAGUS_IOS_SCENE_SDL_PATCH"
+print "PATCHED Stratagus to build iOS with the UIKit scene SDL source"
+[[ -f "$STRATAGUS_IOS_FATAL_ERRORS_PATCH" ]] || {
+  print -u2 "required Stratagus iOS fatal-error patch is missing"
+  exit 1
+}
+patch -s -d "$ROOT_DIR/engine/stratagus" -p1 \
+  < "$STRATAGUS_IOS_FATAL_ERRORS_PATCH"
+print "PATCHED Stratagus to show iOS fatal errors and keep PeonPad.log"
 export_repository "Wargus" "sources.wargus" \
   "$WARGUS_SOURCE" "$ROOT_DIR/game/wargus"
 [[ -f "$WARGUS_PATCH" ]] || {

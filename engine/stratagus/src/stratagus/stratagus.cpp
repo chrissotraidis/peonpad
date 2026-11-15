@@ -439,6 +439,9 @@ void Exit(int err)
 */
 void ExitFatal(int err)
 {
+#ifdef PEONPAD_IOS
+	PeonPadIOSShowFatalError(nullptr);
+#endif
 #ifdef USE_STACKTRACE
 	throw stacktrace::stack_runtime_error((const char*)err);
 #else
@@ -719,6 +722,7 @@ try {
 #endif
 	//  Setup some defaults.
 #ifdef PEONPAD_IOS
+	PeonPadIOSStartLog();
 	std::string dataPathReason;
 	StratagusLibPath = PeonPadSelectGameDataPath(
 		PeonPadIOSDocumentsGameDataPath(),
@@ -820,6 +824,9 @@ try {
 		        "and tell us what caused this bug to occur.\n"
 		        " === exception state traceback === \n");
 	ErrorPrint("%s", e.what());
+#ifdef PEONPAD_IOS
+	PeonPadIOSShowFatalError(e.what());
+#endif
 	exit(1);
 }
 catch (const gcn::Exception &ex) {
@@ -833,6 +840,9 @@ catch (const gcn::Exception &ex) {
 	           ex.getLine(),
 	           ex.getFunction().c_str(),
 	           ex.getMessage().c_str());
+#ifdef PEONPAD_IOS
+	PeonPadIOSShowFatalError(ex.getMessage().c_str());
+#endif
 	exit(1);
 }
 catch (...) {
@@ -841,6 +851,9 @@ catch (...) {
 	           "https://github.com/Wargus/stratagus/issues\n"
 	           "and tell us what caused this bug to occur.\n"
 	           " === exception state traceback === \n");
+#ifdef PEONPAD_IOS
+	PeonPadIOSShowFatalError(nullptr);
+#endif
 	exit(1);
 }
 //@}
