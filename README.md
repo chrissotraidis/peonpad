@@ -108,7 +108,8 @@ Entertainment and its licensors.</sub>
 | Multiplayer | 🧪 | Engine support exists; local and online play are unverified on iPad |
 | Replay playback | ⏸️ | Hidden in the private iPad profile until legacy playback is reliable |
 | Files-visible game data | ✅ | Loads validated `Documents/data.Wargus` copied after installation |
-| In-app folder picker | 🧭 | Planned; Preview 1 uses the Files-visible app folder |
+| Error messages and launch log | ✅ | Engine errors show a **PeonPad stopped** message; each launch writes `PeonPad.log` (Preview 2) |
+| In-app folder picker | 🧭 | Planned; the previews use the Files-visible app folder |
 
 The private Warcraft II profile exposes original campaigns plus Skirmish
 Classic and Skirmish Modern. Incompatible legacy custom modes are deliberately
@@ -156,8 +157,11 @@ On My iPad/PeonPad/data.Wargus
 
 PeonPad validates `scripts/stratagus.lua`, the extraction marker, graphics,
 maps, and sounds at launch. If the folder is missing or incomplete, it shows the
-required location and exits without starting the engine. See
-[`docs/INSTALL_IPA.md`](docs/INSTALL_IPA.md) for the complete flow.
+required location and exits without starting the engine. If the engine later
+hits a damaged or unreadable file, PeonPad shows a **PeonPad stopped** message
+with the file name. Every launch is written to `PeonPad.log` in the same folder;
+attach it to bug reports. See [`docs/INSTALL_IPA.md`](docs/INSTALL_IPA.md) for
+the complete flow.
 
 ### Source build
 
