@@ -43,6 +43,19 @@ or provisioning profile into the PeonPad folder. Extraction remains a desktop
 operation. Saves and preferences remain in PeonPad's separate application
 support directory and survive an in-place update with the same bundle ID.
 
+## If PeonPad closes or says it had to stop
+
+When the game engine hits an error, such as a missing or unreadable file in
+`data.Wargus`, PeonPad shows a **PeonPad stopped** message with the reason
+before it closes. Every launch is also written to `PeonPad.log` in the PeonPad
+folder, and the launch before it is kept as `PeonPad.previous.log`. Attach
+`PeonPad.log` when you report a problem; it holds the app version, device
+model, iPadOS version and the engine's messages, and no game data.
+
+In LiveContainer, the PeonPad folder is PeonPad's data container inside
+LiveContainer's own folder (`LiveContainer/Data/Application/<container>/Documents`),
+so `data.Wargus` and the logs go there.
+
 ## What the release proves
 
 The release audit checks the IPA structure, ARM64/iPadOS identity, legal files,

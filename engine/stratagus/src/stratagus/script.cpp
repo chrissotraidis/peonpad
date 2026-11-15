@@ -51,6 +51,10 @@
 #include <signal.h>
 #include <variant>
 
+#ifdef PEONPAD_IOS
+#include "PeonPadIOSDataPath.h"
+#endif
+
 #ifdef USE_WIN32
 #include <windows.h>
 #include <shlobj.h>
@@ -127,6 +131,9 @@ static int report(int status, bool exitOnError)
 		}
 		ErrorPrint("%s\n", msg);
 		if (exitOnError) {
+#ifdef PEONPAD_IOS
+			PeonPadIOSShowFatalError(msg);
+#endif
 			::exit(1);
 		} else {
 			lua_pushstring(Lua, msg);
@@ -256,7 +263,10 @@ int LuaLoadFile(const fs::path &file, const std::string &strArg, bool exitOnErro
 	// save the current __file__
 	lua_getglobal(Lua, "__file__");
 
-	const int status = luaL_loadbuffer(Lua, content->c_str(), content->size(), file.string().c_str());
+	// "@" marks the chunk as a file, so Lua keeps the end of the path (the
+	// file name) in error messages instead of truncating it from the front.
+	const std::string chunkName = "@" + file.string();
+	const int status = luaL_loadbuffer(Lua, content->c_str(), content->size(), chunkName.c_str());
 
 	if (!status) {
 		lua_pushstring(Lua, fs::absolute(fs::path(file)).generic_u8string().c_str());
