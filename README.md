@@ -244,7 +244,9 @@ If Wargus has already extracted your legally owned game, run:
 
 For unsupported installers, use the extraction guidance in the
 [Wargus README](https://github.com/Wargus/wargus#extracting-data-for-macos),
-then use this `--data` route. PeonPad validates the expected scripts, extraction
+then use this `--data` route. Use Wargus 3.2 or newer: data from Wargus 3.1 or
+older calls engine functions PeonPad's Stratagus no longer has, and PeonPad
+turns it away at launch. PeonPad validates the expected scripts, extraction
 marker, graphics, maps and sounds before staging anything.
 
 > [!WARNING]

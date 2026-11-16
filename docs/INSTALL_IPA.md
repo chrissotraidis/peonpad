@@ -9,7 +9,13 @@ is not signed for a particular Apple account.
 - An iPad running iPadOS 16 or newer.
 - A method you trust to sign and install an unsigned IPA.
 - A complete `data.Wargus` extracted on a computer from your legally owned
-  Warcraft II copy.
+  Warcraft II copy with Wargus 3.2 or newer (3.3.x is what PeonPad is tested
+  with), or with PeonPad's `scripts/prepare-ipad-build.sh`. PeonPad turns away
+  data made by Wargus 3.1 or older, because those scripts call engine functions
+  its Stratagus no longer has.
+- If your FFmpeg has no `libtheora` encoder, Wargus leaves `data.Wargus/videos`
+  empty. The game still runs, without its cinematics;
+  `scripts/prepare-ipad-build.sh` works around the missing encoder.
 
 ## Install and add game data
 
