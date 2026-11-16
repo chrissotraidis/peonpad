@@ -108,7 +108,7 @@ Entertainment and its licensors.</sub>
 | Multiplayer | 🧪 | Engine support exists; local and online play are unverified on iPad |
 | Replay playback | ⏸️ | Hidden in the private iPad profile until legacy playback is reliable |
 | Files-visible game data | ✅ | Loads validated `Documents/data.Wargus` copied after installation |
-| Error messages and launch log | ✅ | Engine errors show a **PeonPad stopped** message; each launch writes `PeonPad.log` (Preview 2) |
+| Error messages and launch log | ✅ | Engine errors show a **PeonPad stopped** message; each launch writes `PeonPad.log`; data from Wargus 3.1 or older is turned away at launch |
 | In-app folder picker | 🧭 | Planned; the previews use the Files-visible app folder |
 
 The private Warcraft II profile exposes original campaigns plus Skirmish
