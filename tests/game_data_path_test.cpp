@@ -42,6 +42,18 @@ int main(int argc, char **argv)
 	assert(PeonPadSelectGameDataPath(documents.string(), "", &reason).empty());
 	assert(reason == "data.Wargus is missing sounds/");
 
+	// Wargus 3.1 data calls engine functions removed in 3.2 (peonpad#11).
+	CreateValidData(documents);
+	std::ofstream(documents / "extracted") << "3.1.2";
+	assert(PeonPadSelectGameDataPath(documents.string(), "", &reason).empty());
+	assert(reason.find("Wargus 3.1.2") != std::string::npos);
+	std::ofstream(documents / "extracted") << "2.4.3\n";
+	assert(PeonPadSelectGameDataPath(documents.string(), "", &reason).empty());
+	for (const char *accepted : {"3.2.0", "3.3.2", "3.3.3\n", "4.0"}) {
+		std::ofstream(documents / "extracted") << accepted;
+		assert(PeonPadSelectGameDataPath(documents.string(), "", &reason) == documents.string());
+	}
+
 	fs::remove_all(root);
 	return 0;
 }

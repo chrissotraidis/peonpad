@@ -1,6 +1,8 @@
 #include "PeonPadGameDataPath.h"
 
+#include <cstdio>
 #include <filesystem>
+#include <fstream>
 
 namespace {
 
@@ -10,6 +12,25 @@ bool SetFailure(std::string *reason, const std::string &message)
 		*reason = message;
 	}
 	return false;
+}
+
+// wartool writes its version to data.Wargus/extracted. Wargus 3.1 and older
+// ship scripts that call engine functions PeonPad's Stratagus no longer has
+// (SetFogOfWarOpacity became SetFogOfWarOpacityLevels in 3.2), so that data
+// stops at its first script error. Unreadable or newer versions are accepted.
+bool IsTooOldExtraction(const std::filesystem::path &marker, std::string &version)
+{
+	std::ifstream file(marker);
+	std::getline(file, version);
+	while (!version.empty() && (version.back() == '\r' || version.back() == ' ')) {
+		version.pop_back();
+	}
+	int major = 0;
+	int minor = 0;
+	if (std::sscanf(version.c_str(), "%d.%d", &major, &minor) != 2) {
+		return false;
+	}
+	return major < 3 || (major == 3 && minor < 2);
 }
 
 } // namespace
@@ -38,6 +59,14 @@ bool PeonPadValidateGameDataPath(const std::string &path, std::string *reason)
 		if (!std::filesystem::is_directory(root / directory, error)) {
 			return SetFailure(reason, std::string("data.Wargus is missing ") + directory + "/");
 		}
+	}
+
+	std::string version;
+	if (IsTooOldExtraction(root / "extracted", version)) {
+		return SetFailure(reason,
+			"data.Wargus was made with Wargus " + version +
+			", which PeonPad can't run. Extract your game again with Wargus 3.2 "
+			"or newer, or with PeonPad's scripts/prepare-ipad-build.sh.");
 	}
 
 	if (reason) {
