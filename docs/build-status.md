@@ -1,6 +1,6 @@
 # PeonPad build status
 
-Status updated: 2026-08-18
+Status updated: 2026-11-16
 
 Remote-to-local handoff updated: 2026-07-11
 
@@ -24,6 +24,24 @@ Documents directory displayed the expected setup message; a 1,998-file owned
 `data.Wargus` transfer read back byte-for-byte; and relaunch reached the
 Warcraft II title and main menu. Existing preference key/value pairs were
 unchanged (the engine only rewrote their order).
+
+A player report in November ([#11](https://github.com/chrissotraidis/peonpad/issues/11))
+said PeonPad closed right after accepting a copied `data.Wargus` inside
+LiveContainer. Until Preview 2, the engine quit with `exit(1)` and no
+message on any Lua or fatal error. Preview 1 inside LiveContainer 3.8.0 on
+iPadOS 27.2.1 reached the main menu with owned Wargus 3.3.3 data, so the
+cause had to be in the player's data. Preview 2 (#14) shows a **PeonPad
+stopped** message and writes `Documents/PeonPad.log`. With it, the player saw
+`attempt to call global 'SetFogOfWarOpacity' (a nil value)`. Wargus 3.1.2 and
+older scripts make that call; Wargus 3.2.0 renamed the function
+`SetFogOfWarOpacityLevels`, the only name the pinned Stratagus provides.
+Preview 3 (#16) reads the version in `data.Wargus/extracted` and turns away
+data older than 3.2 with a setup message. Data from Wargus 3.3.2's scripts also
+starts on this engine. An FFmpeg without `libtheora` leaves `videos/` empty;
+only the cinematics are missing, and `prepare-ipad-build.sh` works around it.
+Inside LiveContainer, a guest without UIKit scenes (Preview 1) fails at launch
+when LiveContainer is built with the iOS 27 SDK unless "Spoof SDK version" is
+on; Preview 2 and later use scenes and don't need it.
 
 The public device profile now accepts an ignored root-level or external
 `data.Wargus`, staged without its redundant installer MPQ. The engine
