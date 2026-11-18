@@ -15,3 +15,4 @@ void PeonPadControlGroupsCancel();
 void PeonPadControlGroupsReset();
 void PeonPadControlGroupsUpdate(std::uint32_t ticks);
 void PeonPadDrawControlGroups();
+void PeonPadSetControllerConnected(bool connected);

@@ -31,6 +31,7 @@ struct ControlGroupPointerState {
 };
 
 ControlGroupPointerState PointerState;
+bool ControllerConnected = false;
 
 bool GetLayout(PeonPadControlGroupRects &rects)
 {
@@ -106,7 +107,7 @@ bool PeonPadControlGroupsPointerDown(const std::int64_t pointerId,
 	                                const std::uint32_t ticks)
 {
 	PeonPadControlGroupRects rects;
-	if (!GameRunning || GameObserve || PointerState.active || !GetLayout(rects)) {
+	if (ControllerConnected || !GameRunning || GameObserve || PointerState.active || !GetLayout(rects)) {
 		return false;
 	}
 
@@ -185,10 +186,18 @@ void PeonPadControlGroupsUpdate(const std::uint32_t ticks)
 	}
 }
 
+void PeonPadSetControllerConnected(bool connected)
+{
+	if (connected && !ControllerConnected) {
+		PeonPadControlGroupsReset();
+	}
+	ControllerConnected = connected;
+}
+
 void PeonPadDrawControlGroups()
 {
 	PeonPadControlGroupRects rects;
-	if (!GameRunning || GameObserve || !GetLayout(rects) || !IsGameFontReady()) {
+	if (ControllerConnected || !GameRunning || GameObserve || !GetLayout(rects) || !IsGameFontReady()) {
 		return;
 	}
 
