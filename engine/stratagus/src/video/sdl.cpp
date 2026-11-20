@@ -329,6 +329,19 @@ static void setDpiAware() {
 /**
 **  Initialize the video part for SDL.
 */
+#ifdef PEONPAD_IOS
+static void PeonPadUpdateControllerVisibility()
+{
+	for (int index = 0; index < SDL_NumJoysticks(); ++index) {
+		if (SDL_IsGameController(index)) {
+			PeonPadSetControllerConnected(true);
+			return;
+		}
+	}
+	PeonPadSetControllerConnected(false);
+}
+#endif
+
 void InitVideoSdl()
 {
 	Uint32 flags = SDL_WINDOW_ALLOW_HIGHDPI;
@@ -350,6 +363,11 @@ void InitVideoSdl()
 			exit(1);
 		}
 
+#ifdef PEONPAD_IOS
+		if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) == 0) {
+			PeonPadUpdateControllerVisibility();
+		}
+#endif
 		SDL_CUSTOM_KEY_UP = SDL_RegisterEvents(1);
 		SDL_StartTextInput();
 
@@ -883,6 +901,12 @@ static void SdlDoEvent(const EventCallback &callbacks, SDL_Event &event)
 			}
 			break;
 
+#ifdef PEONPAD_IOS
+		case SDL_JOYDEVICEADDED:
+		case SDL_JOYDEVICEREMOVED:
+			PeonPadUpdateControllerVisibility();
+			break;
+#endif
 		case SDL_WINDOWEVENT:
 			switch (event.window.event) {
 				case SDL_WINDOWEVENT_SIZE_CHANGED:

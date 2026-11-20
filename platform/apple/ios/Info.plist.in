@@ -10,6 +10,15 @@
   <string>PeonPad</string>
   <key>CFBundleIdentifier</key>
   <string>org.peonpad.ios</string>
+  <key>CFBundleURLTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>padmint-peonpad</string>
+      </array>
+    </dict>
+  </array>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundleIcons~ipad</key>
@@ -28,9 +37,9 @@
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>CFBundleShortVersionString</key>
-  <string>0.1.0</string>
+  <string>0.1.1</string>
   <key>CFBundleVersion</key>
-  <string>7</string>
+  <string>8</string>
   <key>LSRequiresIPhoneOS</key>
   <true/>
   <key>MinimumOSVersion</key>
@@ -56,8 +65,17 @@
   <true/>
   <key>UIRequiresFullScreen</key>
   <true/>
+  <key>UIRequiresFullScreenIgnoredStartingWithVersion</key>
+  <string>26</string>
+  <key>UISupportedInterfaceOrientations</key>
+  <array>
+    <string>UIInterfaceOrientationLandscapeLeft</string>
+    <string>UIInterfaceOrientationLandscapeRight</string>
+  </array>
   <key>UISupportedInterfaceOrientations~ipad</key>
   <array>
+    <string>UIInterfaceOrientationPortrait</string>
+    <string>UIInterfaceOrientationPortraitUpsideDown</string>
     <string>UIInterfaceOrientationLandscapeLeft</string>
     <string>UIInterfaceOrientationLandscapeRight</string>
   </array>
